@@ -9,7 +9,7 @@ import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
 import cl.security.model.Params;
 
-public class CheckMessagesDB implements EventListener {
+public class CheckMessagesDB  {
 
 	private boolean isTimeToExecute = false;
 
@@ -27,7 +27,6 @@ public class CheckMessagesDB implements EventListener {
 		}
 	}
 
-	@Override
 	public void setIfIsTimeToExecute() {
 		// Hardcode - Aqui de sebe ir a la BD a revisar si hay data en la tabla y de ser
 		// asi se setea a true

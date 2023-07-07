@@ -22,59 +22,41 @@ import cl.security.status.strategy.deal.ApplicationStatus;
 
 public class CheckJob implements Job {
 
-	private Connection con;
-	private Statement stmt;
-	private ResultSet rs = null;
 	public static Map<String, StatusStrategy> status = new HashMap<String, StatusStrategy>();
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 
-		try {
-			con = DatabaseConnection.getInstance().getConnection();
+		CheckMessagesDB checkMessages = new CheckMessagesDB();
+		checkMessages.setIfIsTimeToExecute();
 
-			stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY,
-					ResultSet.HOLD_CURSORS_OVER_COMMIT);
+		StatusStrategy strategy;
 
-			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
+		while (checkMessages.isTimeToExecute()) {
 
-			if (rs.next()) {
-
-				StatusStrategy strategy;
-
-				CheckMessagesDB checkMessages = new CheckMessagesDB();
-
-				while (checkMessages.isTimeToExecute()) {
-
-					// Se llena el hashmap con las clases estrategias que estan en el package
-					// cl.security.status.strategy.status
-					// No se deben crear clases que no sean estrategia dentro de ese package ni
-					// tampoco packages dentro de ese package
-					status = getInstatiatedStatusClasses();
-
-					// El DealStatus sería un hilo donde se setea la estrategia que puede ser MLS o
-					// KGR
-					ApplicationStatus appStatus = new ApplicationStatus();
-					
-					String dataBaseName = checkMessages.getParams().getDataBaseName();
-					
-					// Definiendo estrategia para el objeto que calza con el nombre que viene de la base de datos
-					strategy = status.get(dataBaseName.toLowerCase());
-					new Thread(appStatus.process(strategy, checkMessages)).start();
-
-				}
+			// Se llena el hashmap con las clases estrategias que estan en el package
+			// cl.security.status.strategy.status
+			// No se deben crear clases que no sean estrategia dentro de ese package ni
+			// tampoco packages dentro de ese package
+			try {
+				status = getInstatiatedStatusClasses();
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
-		} catch (SQLException | ClassNotFoundException | InstantiationException
-				| IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// El DealStatus sería un hilo donde se setea la estrategia que puede ser MLS o
+			// KGR
+			ApplicationStatus appStatus = new ApplicationStatus();
+
+			String dataBaseName = checkMessages.getParams().getDataBaseName();
+
+			// Definiendo estrategia para el objeto que calza con el nombre que viene de la
+			// base de datos
+			strategy = status.get(dataBaseName.toLowerCase());
+			new Thread(appStatus.process(strategy, checkMessages)).start();
+
 		}
-
-		
-
-		
-		
 
 	}
 
