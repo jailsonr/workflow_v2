@@ -1,6 +1,7 @@
 package cl.security.status.strategy.deal;
 
 import cl.security.database.utils.RepairEnum;
+import cl.security.mdd.dao.Repair;
 import cl.security.mdd.dao.RepairKGR;
 import cl.security.mdd.dao.RepairMLS;
 import cl.security.model.Params;
@@ -31,10 +32,12 @@ public class ApplicationStatus implements Runnable {
 			String reparo = strategy.statusFromCustomWindow(p);
 			
 			strategy.acceptanceLogger(p);
+			
+			Repair repair = strategy instanceof KGRStatus ? new RepairKGR().build(p, reparo)
+					: new RepairMLS().build(p, reparo);
 
 			RepairEnum.valueOf(reparo)
-					.queryUpdateRepair(strategy instanceof KGRStatus ? new RepairKGR().build(p, reparo)
-							: new RepairMLS().build(p, reparo));
+					.queryUpdateRepair(repair);
 
 			System.out.println("Ejecutando " + strategy.toString());
 		}
