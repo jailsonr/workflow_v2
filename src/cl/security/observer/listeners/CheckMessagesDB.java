@@ -7,6 +7,7 @@ import java.sql.Statement;
 
 import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
+import cl.security.model.Params;
 
 public class CheckMessagesDB implements EventListener {
 
@@ -15,7 +16,7 @@ public class CheckMessagesDB implements EventListener {
 	private Connection con;
 	private Statement stmt;
 	private ResultSet rs = null;
-	private String dataBaseName;
+	private Params params;
 
 	public CheckMessagesDB() {
 		try {
@@ -40,7 +41,10 @@ public class CheckMessagesDB implements EventListener {
 
 			if (rs.next()) {
 				setTimeToExecute(true);
-				setDataBaseName(rs.getString(3).split("\\s+")[0]);
+				
+				String arr[] = rs.getString(3).split("\\s+");
+				
+				params = new Params(arr[0], Integer.parseInt(arr[1].trim()), Integer.parseInt(arr[2].trim()));
 			} else {
 				setTimeToExecute(false);
 			}
@@ -52,12 +56,8 @@ public class CheckMessagesDB implements EventListener {
 
 	}
 
-	public String getDataBaseName() {
-		return dataBaseName;
-	}
-
-	public void setDataBaseName(String dataBaseName) {
-		this.dataBaseName = dataBaseName;
+	public Params getParams() {
+		return params;
 	}
 
 	public boolean isTimeToExecute() {

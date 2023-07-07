@@ -11,6 +11,7 @@ import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
 import cl.security.quartz.scheduler.CheckJob;
+import cl.security.utils.Constants;
 
 public class Main {
 
@@ -19,8 +20,9 @@ public class Main {
 
 		JobDetail j = JobBuilder.newJob(CheckJob.class).build();
 
+		// INTERVAL_TIME es de 5 segundos. Cambiar para que lo obtenga del archivo properties
 		Trigger t = TriggerBuilder.newTrigger().withIdentity("CroneTrigger")
-				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(2).repeatForever()).build();
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(Constants.INTERVAL_TIME).repeatForever()).build();
 		
 		try {
 			Scheduler s = StdSchedulerFactory.getDefaultScheduler();
