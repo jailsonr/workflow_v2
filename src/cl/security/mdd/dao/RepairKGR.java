@@ -1,14 +1,13 @@
 package cl.security.mdd.dao;
 
 import cl.security.model.Params;
-import cl.security.observer.listeners.CheckMessagesDB;
 
 public class RepairKGR extends Repair {
 
 	@Override
-	public boolean queryUpdateRepair() {
+	public Repair queryUpdateRepair() {
 		// TODO Auto-generated method stub
-		return false;
+		return this;
 	}
 
 	@Override
@@ -16,6 +15,12 @@ public class RepairKGR extends Repair {
 		this.p = p;
 		this.reparo = reparo;
 		return this;
+	}
+
+	@Override
+	public void createKisFile() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

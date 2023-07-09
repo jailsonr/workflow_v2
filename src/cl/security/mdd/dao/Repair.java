@@ -10,8 +10,10 @@ public abstract class Repair {
 	Repair() {
 	}
 	
+	public abstract void createKisFile();
+	
 	public abstract Repair build(Params p, String reparo);
 	
-	public abstract boolean queryUpdateRepair();
+	public abstract Repair queryUpdateRepair();
 
 }

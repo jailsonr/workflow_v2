@@ -32,7 +32,7 @@ public class CheckJob implements Job {
 
 		StatusStrategy strategy;
 
-		while (checkMessages.isTimeToExecute()) {
+		if (checkMessages.isTimeToExecute()) {
 
 			// Se llena el hashmap con las clases estrategias que estan en el package
 			// cl.security.status.strategy.status
