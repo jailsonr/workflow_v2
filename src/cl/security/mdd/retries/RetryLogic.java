@@ -2,12 +2,14 @@ package cl.security.mdd.retries;
 
 public class RetryLogic {
 
+	int dealRetries;
 	int retryAttempts;
 	final long TIME_TO_WAIT;
 
-	public RetryLogic(int retryAttempts, long timeToWait) {
+	public RetryLogic(int retryAttempts, long timeToWait, int dealRetries) {
 		this.retryAttempts = retryAttempts;
 		this.TIME_TO_WAIT = timeToWait;
+		this.dealRetries = dealRetries;
 	}
 
 	public void retryImpl(RetryImplementation retryImplementation) {
@@ -22,7 +24,7 @@ public class RetryLogic {
 	}
 
 	public boolean shouldRetry() {
-		return retryAttempts > 0;
+		return dealRetries < retryAttempts;
 	}
 
 	public void waitBeforeNextRetry() {
