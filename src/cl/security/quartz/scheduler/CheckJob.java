@@ -20,12 +20,12 @@ import cl.security.observer.listeners.CheckMessagesDB;
 import cl.security.status.strategy.StatusStrategy;
 import cl.security.status.strategy.deal.ApplicationStatus;
 
-public class CheckJob implements Job {
+public class CheckJob implements Runnable {
 
 	public static Map<String, StatusStrategy> status = new HashMap<String, StatusStrategy>();
 
 	@Override
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+	public void run() {
 
 		CheckMessagesDB checkMessages = new CheckMessagesDB();
 		checkMessages.setIfIsTimeToExecute();
