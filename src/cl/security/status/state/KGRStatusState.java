@@ -2,7 +2,7 @@ package cl.security.status.state;
 
 public abstract class KGRStatusState {
 	
-	protected KGRStatusValue kgrStatusValue;
+	public KGRStatusValue kgrStatusValue;
 	
 	public KGRStatusState(KGRStatusValue kgrStatusValue) {
 		this.kgrStatusValue = kgrStatusValue;

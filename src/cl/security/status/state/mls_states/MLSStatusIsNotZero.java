@@ -1,33 +1,33 @@
 package cl.security.status.state.mls_states;
 
+import cl.security.model.Deal;
 import cl.security.status.state.KGRStatusState;
 import cl.security.status.state.KGRStatusValue;
 
 public class MLSStatusIsNotZero extends KGRStatusState{
+	
+	private Deal deal;
 
 	public MLSStatusIsNotZero(KGRStatusValue kgrStatusValue) {
 		super(kgrStatusValue);
+		this.deal = kgrStatusValue.deal;
 	}
 
 	@Override
 	public void kgrStatusIsTwoExecution() {
-		kgrStatusValue.queryUpdateRepairKGR(0, 0, null, null, null);
-		kgrStatusValue.queryUpdateWKFDealsList(0, 0, 0);
+		kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		
 	}
 
 	@Override
 	public void kgrStatusIsThreeExecution() {
-		kgrStatusValue.queryUpdateRepairKGR(0, 0, null, null, null);
-		kgrStatusValue.queryUpdateWKFDealsList(0, 0, 0);
+		kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		
 	}
 
 	@Override
 	public void kgrStatusIsFourExecution() {
-		kgrStatusValue.queryUpdateRepairKGR(0, 0, null, null, null);
-		kgrStatusValue.queryUpdateWKFDealsList(0, 0, 0);
-		
+		kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 	}
 
 }

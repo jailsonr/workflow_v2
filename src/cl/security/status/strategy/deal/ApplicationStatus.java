@@ -51,17 +51,18 @@ public class ApplicationStatus implements Runnable {
 			} catch (SQLException e1) {
 			}
 
-			DealDao.dealSet.forEach(e -> {
+			DealDao.dealSet.forEach(deal -> {
 
-				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), e.getRetries() * 1000, e.getRetries());
+				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), deal.getRetries() * 1000, deal.getRetries());
 
 				retryLogic.retryImpl(() -> {
 
 					Thread t = new Thread(() -> {
 						// Llamar a la base de datos. Es el kgrStatusValue
-						String krgStatusValue = numToWord.get(0);
+						String krgStatusValue = numToWord.get(strategy.getStatus(0, 0, 0, null, 0, 0));
+						int mlsStatusValue = strategy.getStatus(0, 0, 0, krgStatusValue, 0, 0);
 
-						KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue).setState();
+						KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue).setState(mlsStatusValue, deal);
 
 						kgrStatusState.executeUpdates(KGRStatusValueEnum.valueOf(krgStatusValue).num);
 					});

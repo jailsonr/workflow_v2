@@ -19,4 +19,11 @@ public class KondorStatus implements StatusStrategy{
 		
 	}
 
+
+	@Override
+	public int getStatus(int kdbTablesId, int dealId, int transactionId, String action, int version, int retries) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
