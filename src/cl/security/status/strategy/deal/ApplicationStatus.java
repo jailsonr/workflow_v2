@@ -3,7 +3,6 @@ package cl.security.status.strategy.deal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import cl.security.database.utils.RepairEnum;
 import cl.security.mdd.dao.DealDao;
@@ -12,7 +11,6 @@ import cl.security.mdd.dao.RepairKGR;
 import cl.security.mdd.dao.RepairMLS;
 import cl.security.mdd.enums.KGRStatusValueEnum;
 import cl.security.mdd.retries.RetryLogic;
-import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.observer.listeners.CheckMessagesDB;
 import cl.security.status.state.KGRStatusState;
@@ -53,18 +51,24 @@ public class ApplicationStatus implements Runnable {
 
 			DealDao.dealSet.forEach(deal -> {
 
-				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), deal.getRetries() * 1000, deal.getRetries());
+				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), deal.getRetries() * 1000,
+						deal.getRetries());
 
 				retryLogic.retryImpl(() -> {
 
 					Thread t = new Thread(() -> {
 						// Llamar a la base de datos. Es el kgrStatusValue
-						String krgStatusValue = numToWord.get(strategy.getStatus(0, 0, 0, null, 0, 0));
-						int mlsStatusValue = strategy.getStatus(0, 0, 0, krgStatusValue, 0, 0);
+						String krgStatusValue = numToWord.get(strategy.getStatus(deal));
 
-						KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue).setState(mlsStatusValue, deal);
+						int mlsStatusValue = strategy.getStatus(deal);
+
+						KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue)
+								.setState(mlsStatusValue, deal);
 
 						kgrStatusState.executeUpdates(KGRStatusValueEnum.valueOf(krgStatusValue).num);
+						
+						deal.setRetries(Integer.valueOf(Constants.RETRIES) + 1);
+						
 					});
 
 					t.start();

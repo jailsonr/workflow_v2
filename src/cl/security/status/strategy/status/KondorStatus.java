@@ -1,5 +1,6 @@
 package cl.security.status.strategy.status;
 
+import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.status.strategy.StatusStrategy;
 
@@ -21,7 +22,7 @@ public class KondorStatus implements StatusStrategy{
 
 
 	@Override
-	public int getStatus(int kdbTablesId, int dealId, int transactionId, String action, int version, int retries) {
+	public int getStatus(Deal deal) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

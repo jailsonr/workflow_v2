@@ -14,6 +14,7 @@ import cl.security.model.Deal;
 public final class DealDao {
 	
 	public static Set<Deal> dealSet = new HashSet<>();
+	public static Set<Deal> processedDealSet = new HashSet<>();
 	
 	public static void loadDeals() throws SQLException {
 		Connection con = DatabaseConnection.getInstance().getConnection();

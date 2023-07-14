@@ -3,6 +3,8 @@ package cl.security.status.strategy.status;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 
+import cl.security.database.utils.QueryEnum;
+import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.status.strategy.StatusStrategy;
 import cl.security.utils.PropertiesUtil;
@@ -40,9 +42,30 @@ public class KGRStatus implements StatusStrategy{
 	}
 
 	@Override
-	public int getStatus(int kdbTablesId, int dealId, int transactionId, String action, int version, int retries) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getStatus(Deal deal) {
+		int status = 0;
+		String query = QueryEnum.KGR_STATUS_GET.query;
+
+		CallableStatement cs = null;
+
+		try {
+			cs = getConn().prepareCall(query);
+
+			cs.setInt(1, deal.getKdbTableId());
+			cs.setInt(2, deal.getDealId());
+			cs.setInt(3, deal.getTransactionId());
+			cs.setString(4, deal.getAction());
+			cs.setInt(5, deal.getVersion());
+			cs.setInt(6, deal.getRetries());
+			cs.registerOutParameter(7, 4);
+			cs.registerOutParameter(8, 12);
+
+			cs.execute();
+			status = cs.getInt(7);
+		} catch (SQLException e2) {
+		}
+
+		return status;
 	}
 
 }

@@ -5,9 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
-
 import cl.security.database.DatabaseConnection;
+import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.utils.PropertiesUtil;
 
@@ -66,7 +65,6 @@ public interface StatusStrategy {
 
 	public void acceptanceLogger(Params p);
 	
-	public int getStatus(int kdbTablesId, int dealId,
-			int transactionId, String action, int version, int retries);
+	public int getStatus(Deal deal);
 
 }
