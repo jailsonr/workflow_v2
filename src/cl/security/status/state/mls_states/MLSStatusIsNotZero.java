@@ -15,19 +15,35 @@ public class MLSStatusIsNotZero extends KGRStatusState{
 
 	@Override
 	public void kgrStatusIsTwoExecution() {
-		kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
-		
+		//kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
+		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N",
+				"R", "S");
+		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
+				deal.getTransactionId());
+		kgrStatusValue.overDraftLogger("KGR", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
+
 	}
 
 	@Override
 	public void kgrStatusIsThreeExecution() {
-		kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
-		
+		//kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
+		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
+				"R", "S");
+		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
+				deal.getTransactionId());
+		kgrStatusValue.overDraftLogger("KGR", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
+
 	}
 
 	@Override
 	public void kgrStatusIsFourExecution() {
-		kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
+		//kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
+		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
+				"R", "S");
+		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
+				deal.getTransactionId());
+		kgrStatusValue.overDraftLogger("KGR", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
+
 	}
 
 }

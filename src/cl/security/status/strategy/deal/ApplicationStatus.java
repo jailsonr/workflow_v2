@@ -49,33 +49,11 @@ public class ApplicationStatus implements Runnable {
 			} catch (SQLException e1) {
 			}
 
-			DealDao.dealSet.forEach(deal -> {
+			Thread dealSetThread = new Thread(dealSetProcess());
+//			Thread removeDealsThread = new Thread(removeDealFromSet(dealSetThread));
 
-				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), deal.getRetries() * 1000,
-						deal.getRetries());
-
-				retryLogic.retryImpl(() -> {
-
-					Thread t = new Thread(() -> {
-						// Llamar a la base de datos. Es el kgrStatusValue
-						String krgStatusValue = numToWord.get(strategy.getStatus(deal));
-
-						int mlsStatusValue = strategy.getStatus(deal);
-
-						KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue)
-								.setState(mlsStatusValue, deal);
-
-						kgrStatusState.executeUpdates(KGRStatusValueEnum.valueOf(krgStatusValue).num);
-						
-						deal.setRetries(Integer.valueOf(Constants.RETRIES) + 1);
-						
-					});
-
-					t.start();
-
-				});
-
-			});
+			dealSetThread.start();
+//			removeDealsThread.start();
 
 		} else {
 
@@ -93,5 +71,56 @@ public class ApplicationStatus implements Runnable {
 		}
 
 	}
+
+	private Runnable dealSetProcess() {
+
+		return () -> {
+
+			DealDao.dealSet.forEach(deal -> {
+
+				int mlsStatusValue = strategy.getStatus(deal);
+
+				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), deal.getRetries() * 1000,
+						deal.getRetries());
+
+				retryLogic.retryImpl(() -> {
+
+					boolean statusReadyMLS = false;
+					
+					// Loop de 6 reintentos hasta que el statusReady sea true
+					if (statusReadyMLS) {
+						String krgStatusValue = numToWord.get(strategy.getStatus(deal));
+
+						KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue)
+								.setState(mlsStatusValue, deal);
+
+						kgrStatusState.executeUpdates(KGRStatusValueEnum.valueOf(krgStatusValue).num);
+
+						deal.setRetries(Integer.valueOf(Constants.RETRIES) + 1);
+
+						DealDao.dealSet.remove(deal);
+//						DealDao.processedDealSet.add(deal);
+
+					}
+
+				});
+				// Despues de los 6 intentos se elimina objeto de la lista
+				DealDao.dealSet.remove(deal);
+			});
+
+		};
+	}
+
+//	private Runnable removeDealFromSet(Thread t) {
+//		return () -> {
+//			while (true) {
+//				if (!t.isAlive()) {
+//					DealDao.processedDealSet.forEach(d -> {
+//						DealDao.dealSet.remove(d);
+//					});
+//				}
+//			}
+//		};
+//	}
 
 }

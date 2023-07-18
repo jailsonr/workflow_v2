@@ -1,6 +1,10 @@
 package cl.security.status.state.mls_states;
 
+import cl.security.database.utils.RepairEnum;
+import cl.security.mdd.dao.Repair;
+import cl.security.mdd.dao.RepairKGR;
 import cl.security.model.Deal;
+import cl.security.model.Params;
 import cl.security.status.state.KGRStatusState;
 import cl.security.status.state.KGRStatusValue;
 
@@ -15,10 +19,22 @@ public class MLSStatusIsZero extends KGRStatusState {
 
 	@Override
 	public void kgrStatusIsTwoExecution() {
-		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N",
-				"N", "N");
+		
+		String reparo = "N";
+		
+		Params p = new Params("KGR", deal.getKdbTableId(), deal.getDealId());
+		
+		Repair repair = new RepairKGR().build(p, reparo);
+		
+		RepairEnum.valueOf(reparo).queryUpdateRepair(repair);
+		
 		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
 				deal.getTransactionId());
+		
+//		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N",
+//				"N", "N");
+//		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
+//				deal.getTransactionId());
 
 	}
 

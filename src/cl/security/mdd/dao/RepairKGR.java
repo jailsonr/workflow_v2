@@ -1,6 +1,10 @@
 package cl.security.mdd.dao;
 
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+
 import cl.security.model.Params;
+import cl.security.utils.PropertiesUtil;
 
 public class RepairKGR extends Repair {
 
@@ -13,14 +17,42 @@ public class RepairKGR extends Repair {
 
 	@Override
 	public void createKisFile() {
-		// TODO Auto-generated method stub
+		String fileName = null;
+		KisFileDAO create = new KisFileDAO();
+		int dealsId = create.getKISDealId(p.getKdbTablesId(), p.getDealsId());
+		fileName = create.importFile(dealsId, p.getKdbTablesId(), 0, "Y");
+
+		super.deleteMessage();
 
 	}
 
 	@Override
 	public Repair queryUpdateRepair(int dealId, int kdbTablesId, String repKGR, String repMLS, String envBO) {
-		// TODO Auto-generated method stub
-		return null;
+		CallableStatement cs = null;
+
+		System.out.println("Ejecutando " + PropertiesUtil.FLAGS + " DealId: " + dealId);
+		String storeProcedure = "{call Kustom.." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
+
+		try {
+			cs = getConn().prepareCall(storeProcedure);
+		} catch (SQLException e) {
+		}
+
+		try {
+			cs.setString(1, "U");
+			cs.setInt(2, kdbTablesId);
+			cs.setInt(3, dealId);
+			cs.setString(4, repKGR);
+			cs.setString(5, repMLS);
+			cs.setString(6, envBO);
+		} catch (SQLException e) {
+		}
+		try {
+			cs.execute();
+		} catch (SQLException e) {
+		}
+		return this;
+	
 	}
 
 }

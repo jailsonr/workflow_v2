@@ -28,5 +28,9 @@ public abstract class Repair {
 	
 	public abstract Repair queryUpdateRepair(int dealId, int kdbTablesId,
 			String repKGR, String repMLS,String envBO);
+	
+	public void deleteMessage() {
+		DeleteMessage.deleteMessage();
+	}
 
 }

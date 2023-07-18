@@ -22,12 +22,8 @@ public class RepairMLS extends Repair {
 		int dealsId = create.getKISDealId(p.getKdbTablesId(), p.getDealsId());
 		fileName = create.importFile(dealsId, p.getKdbTablesId(), 0, "Y");
 
-		deleteMessage();
+		super.deleteMessage();
 
-	}
-
-	public void deleteMessage() {
-		DeleteMessage.deleteMessage();
 	}
 
 	@Override
