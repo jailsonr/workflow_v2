@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import cl.security.database.DatabaseConnection;
 import cl.security.model.Deal;
@@ -64,7 +65,28 @@ public interface StatusStrategy {
 	}
 
 	public void acceptanceLogger(Params p);
-	
+
 	public int getStatus(Deal deal);
+
+	default boolean getStatusReady(Deal deal) {
+
+		CallableStatement cs = null;
+		int status = 0;
+		String storeProcedure = "{call Kustom.." + PropertiesUtil.MLSRESULT + "(?,?,?,?)}";
+
+		try {
+			cs = getConn().prepareCall(storeProcedure);
+			cs.setInt(1, deal.getKdbTableId());
+			cs.setInt(2, deal.getTransactionId());
+			cs.setDouble(3, deal.getDealId());
+			cs.registerOutParameter(4, Types.INTEGER);
+			cs.execute();
+			status = cs.getInt(4);
+		} catch (SQLException e) {
+		}
+
+		return status != 0;
+
+	};
 
 }

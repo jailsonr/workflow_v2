@@ -61,7 +61,7 @@ public final class LoaderUtil {
                         // removes the .class extension
                       try
                       {
-                        classes.put(file.replace("Status", "").toLowerCase(), (StatusStrategy) Class.forName(pckgname + '.' + file.substring(0, file.length() - 6)).newInstance());                      
+                        classes.put(file.replace("Status", "").toLowerCase().split("\\.")[0], (StatusStrategy) Class.forName(pckgname + '.' + file.substring(0, file.length() - 6)).newInstance());                      
                       }
                       catch (NoClassDefFoundError e)
                       {

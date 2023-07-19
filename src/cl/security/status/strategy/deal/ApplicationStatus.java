@@ -2,7 +2,9 @@ package cl.security.status.strategy.deal;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import cl.security.database.utils.RepairEnum;
 import cl.security.mdd.dao.DealDao;
@@ -11,8 +13,10 @@ import cl.security.mdd.dao.RepairKGR;
 import cl.security.mdd.dao.RepairMLS;
 import cl.security.mdd.enums.KGRStatusValueEnum;
 import cl.security.mdd.retries.RetryLogic;
+import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.observer.listeners.CheckMessagesDB;
+import cl.security.quartz.scheduler.CheckJob;
 import cl.security.status.state.KGRStatusState;
 import cl.security.status.strategy.StatusStrategy;
 import cl.security.status.strategy.status.KGRStatus;
@@ -21,6 +25,7 @@ import cl.security.utils.Constants;
 
 public class ApplicationStatus implements Runnable {
 
+	static int count = 0;
 	private Map<Integer, String> numToWord = new HashMap<>();
 	private StatusStrategy strategy = null;
 	private Params p;
@@ -76,39 +81,72 @@ public class ApplicationStatus implements Runnable {
 
 		return () -> {
 
+			Set<Deal> processedDealSet = new HashSet<>();
+
 			DealDao.dealSet.forEach(deal -> {
+
+				strategy = CheckJob.status.get(Constants.MLS);
 
 				int mlsStatusValue = strategy.getStatus(deal);
 
-				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), deal.getRetries() * 1000,
-						deal.getRetries());
+				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 1);
 
-				retryLogic.retryImpl(() -> {
+				while (retryLogic.shouldRetry()) {
+					retryLogic.retryImpl(() -> {
 
-					boolean statusReadyMLS = false;
-					
-					// Loop de 6 reintentos hasta que el statusReady sea true
-					if (statusReadyMLS) {
-						String krgStatusValue = numToWord.get(strategy.getStatus(deal));
+						boolean statusReadyMLS = strategy.getStatusReady(deal);
 
-						KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue)
-								.setState(mlsStatusValue, deal);
+						// Loop de 6 reintentos hasta que el statusReady sea true
+						if (statusReadyMLS) {
 
-						kgrStatusState.executeUpdates(KGRStatusValueEnum.valueOf(krgStatusValue).num);
+							strategy = CheckJob.status.get(Constants.KRG);
 
-						deal.setRetries(Integer.valueOf(Constants.RETRIES) + 1);
+							String krgStatusValue = numToWord.get(strategy.getStatus(deal));
 
-						DealDao.dealSet.remove(deal);
-//						DealDao.processedDealSet.add(deal);
+							KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue)
+									.setState(mlsStatusValue, deal);
 
-					}
+							kgrStatusState.executeUpdates(KGRStatusValueEnum.valueOf(krgStatusValue).num);
 
-				});
-				// Despues de los 6 intentos se elimina objeto de la lista
-				DealDao.dealSet.remove(deal);
+							processedDealSet.add(deal);
+
+						}
+						retryLogic.dealReties += 1;
+						;
+
+//						System.out.println(deal.getDealId() + " .");
+
+					});
+				}
+
+				if (!retryLogic.shouldRetry()) {
+					System.out.println(String.format("A borrar %s", deal.getDealId()));
+					// Despues de los 6 intentos se elimina objeto de la lista
+					processedDealSet.add(deal);
+
+				}
+
 			});
 
+			System.out.println("Borrados");
+			DealDao.processedDealSet.forEach(System.out::println);
+			
+			retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 1);
+			
+			try {
+				removeDealsFromSet(processedDealSet);
+			} catch (Exception e) {
+				retryLogic.retryImpl(() -> {
+					removeDealsFromSet(processedDealSet);
+				});
+			}
+			
+
 		};
+	}
+	
+	private void removeDealsFromSet(Set<Deal> processedDealSet) {
+		DealDao.dealSet.removeAll(processedDealSet);
 	}
 
 //	private Runnable removeDealFromSet(Thread t) {

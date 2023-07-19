@@ -9,12 +9,23 @@ public abstract class KGRStatusState {
 	}
 	
 	public void executeUpdates(int kgrStatusValue) {
-		if (kgrStatusValue == 2) {
+		
+		switch (kgrStatusValue) {
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
 			kgrStatusIsTwoExecution();
-		} else if (kgrStatusValue == 3) {
+			break;
+		case 3:
 			kgrStatusIsThreeExecution();
-		} else {
-			kgrStatusIsFourExecution();
+			break;
+		case 4:
+			break;
+
+		default:
+			break;
 		}
 	};
 	

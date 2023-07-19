@@ -10,9 +10,13 @@ public final class Constants {
 
 	public static final Logger log = null;
 	
-	public static final String CONFIGURACION = "/kondor/configuracion/Workflow/config/config.properties";
+	public static final String CONFIGURACION = "resources/config.properties";
 	
 	public static final String KPLUSIMPORT = "/kondor/configuracion/Workflow/config/KplusImport_WF.params";
+	
+	public static final String KRG = "kgr";
+	
+	public static final String MLS = "mls";
 	
 	public static final String LOG4J = load.getProperties(CONFIGURACION, log).get("PropertiesLog4j").toString().trim();
 	

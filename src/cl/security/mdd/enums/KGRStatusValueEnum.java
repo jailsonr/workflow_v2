@@ -7,7 +7,19 @@ import cl.security.status.state.mls_states.MLSStatusIsNotZero;
 import cl.security.status.state.mls_states.MLSStatusIsZero;
 
 public enum KGRStatusValueEnum {
-
+	
+	ZERO(0) {
+		@Override
+		public KGRStatusState setState(int mlsStatusValue, Deal d) {
+			return super.setState(mlsStatusValue, d);
+		}
+	},
+	ONE(1) {
+		@Override
+		public KGRStatusState setState(int mlsStatusValue, Deal d) {
+			return super.setState(mlsStatusValue, d);
+		}
+	},
 	TWO(2) {
 		@Override
 		public KGRStatusState setState(int mlsStatusValue, Deal d) {

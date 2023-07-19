@@ -12,10 +12,12 @@ public class Main {
 	public static void main(String[] args)
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-
-		// INTERVAL_TIME es de 5 segundos. Cambiar para que lo obtenga del archivo properties
-		executorService.scheduleAtFixedRate(new CheckJob(), 0, 5, TimeUnit.SECONDS);
+//		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//
+//		// INTERVAL_TIME es de 5 segundos. Cambiar para que lo obtenga del archivo properties
+//		executorService.scheduleAtFixedRate(new CheckJob(), 0, 5, TimeUnit.SECONDS);
+		
+		new Thread(new CheckJob()).start();
 
 	}
 

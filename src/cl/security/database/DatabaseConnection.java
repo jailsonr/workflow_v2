@@ -17,7 +17,7 @@ public class DatabaseConnection {
 	SQLServerXADataSource XADataSource1 = new SQLServerXADataSource();
 
 	private Connection connection;
-	private String url = "jdbc:sqlserver://localhost:1433;DatabaseName=tempdb;encrypt=true;trustServerCertificate=true";
+	private String url = "jdbc:sqlserver://localhost:1433;DatabaseName=Kustom;encrypt=true;trustServerCertificate=true";
 	private String username = "sa";
 	private String password = "lbt-m14.2";
 	String driver = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
