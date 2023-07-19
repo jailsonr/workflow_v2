@@ -14,7 +14,7 @@ public enum QueryEnum {
 	EXCEEDED_DEALS_ACCEPTANCE_INSERT("{call Kustom.." + PropertiesUtil.EDAI + "(?,?,?)}"),
 	EXCEEDED_DEALS_INSERT("{call Kustom.." + PropertiesUtil.EDI + "(?,?,?,?,?)}"),
 	MLS_DEAL_RESULT_GET("{call Kustom.." + PropertiesUtil.MLSRESULT + "(?,?,?,?)}"),
-	KGR_STATUS_GET("{call " + PropertiesUtil.KGRGET + "(?,?,?,?,?,?,?,?)}"),
+	KGR_STATUS_GET("{call Kustom.." + PropertiesUtil.KGRGET + "(?,?,?,?,?,?,?,?)}"),
 	DEAL_LIST_UPDATE("{call " + PropertiesUtil.DEALLISTUPDATE + "(?,?,?)}")
 	;
 

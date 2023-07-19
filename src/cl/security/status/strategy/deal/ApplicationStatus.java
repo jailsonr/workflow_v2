@@ -96,6 +96,7 @@ public class ApplicationStatus implements Runnable {
 
 						boolean statusReadyMLS = strategy.getStatusReady(deal);
 
+//						System.out.println(String.format("Deal %s con retries ", deal.getDealId(), retryLogic.retryAttempts));
 						// Loop de 6 reintentos hasta que el statusReady sea true
 						if (statusReadyMLS) {
 
@@ -105,14 +106,24 @@ public class ApplicationStatus implements Runnable {
 
 							KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue)
 									.setState(mlsStatusValue, deal);
+							
+							int krgStatusValueInt = KGRStatusValueEnum.valueOf(krgStatusValue).num;
 
-							kgrStatusState.executeUpdates(KGRStatusValueEnum.valueOf(krgStatusValue).num);
+							System.out.println("KGR Status es " + krgStatusValueInt);
+							
+							kgrStatusState.executeUpdates(krgStatusValueInt);
+							
+							if (krgStatusValueInt != 0 || krgStatusValueInt != 1) {
+								System.out.println(String.format("Deal %s no ha ejecutado nada.", deal.getDealId()));
+							} else {
+								System.out.println(String.format("Deal %s ya ha ejecutado", deal.getDealId()));
+								retryLogic.retryAttempts = 0;
+							}
 
 							processedDealSet.add(deal);
-
 						}
-						retryLogic.dealReties += 1;
-						;
+						
+						retryLogic.dealReties =+ 1;
 
 //						System.out.println(deal.getDealId() + " .");
 
@@ -120,7 +131,7 @@ public class ApplicationStatus implements Runnable {
 				}
 
 				if (!retryLogic.shouldRetry()) {
-					System.out.println(String.format("A borrar %s", deal.getDealId()));
+					System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
 					// Despues de los 6 intentos se elimina objeto de la lista
 					processedDealSet.add(deal);
 
@@ -129,7 +140,7 @@ public class ApplicationStatus implements Runnable {
 			});
 
 			System.out.println("Borrados");
-			DealDao.processedDealSet.forEach(System.out::println);
+			processedDealSet.forEach(System.out::println);
 			
 			retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 1);
 			

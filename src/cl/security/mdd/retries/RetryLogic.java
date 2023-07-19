@@ -2,7 +2,7 @@ package cl.security.mdd.retries;
 
 public class RetryLogic {
 
-	int retryAttempts;
+	public int retryAttempts;
 	final long TIME_TO_WAIT;
 	public int dealReties = 0;
 

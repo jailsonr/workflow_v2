@@ -20,6 +20,8 @@ public class MLSStatusIsZero extends KGRStatusState {
 	@Override
 	public void kgrStatusIsTwoExecution() {
 		
+		System.out.println("Ejecutando kgrStatusIsTwoExecution de " + this.getClass().getName());
+		
 		String reparo = "N";
 		
 		Params p = new Params("KGR", deal.getKdbTableId(), deal.getDealId());
@@ -40,6 +42,7 @@ public class MLSStatusIsZero extends KGRStatusState {
 
 	@Override
 	public void kgrStatusIsThreeExecution() {
+		System.out.println("Ejecutando kgrStatusIsThreeExecution de " + this.getClass().getName());
 		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
 				"N", "S");
 		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
@@ -50,6 +53,7 @@ public class MLSStatusIsZero extends KGRStatusState {
 
 	@Override
 	public void kgrStatusIsFourExecution() {
+		System.out.println("Ejecutando kgrStatusIsFourExecution de " + this.getClass().getName());
 		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
 				"N", "N");
 		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),

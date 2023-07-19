@@ -15,6 +15,7 @@ public class MLSStatusIsNotZero extends KGRStatusState{
 
 	@Override
 	public void kgrStatusIsTwoExecution() {
+		System.out.println("Ejecutando kgrStatusIsTwoExecution de " + this.getClass().getName());
 		//kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N",
 				"R", "S");
@@ -26,6 +27,7 @@ public class MLSStatusIsNotZero extends KGRStatusState{
 
 	@Override
 	public void kgrStatusIsThreeExecution() {
+		System.out.println("Ejecutando kgrStatusIsThreeExecution de " + this.getClass().getName());
 		//kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
 				"R", "S");
@@ -37,6 +39,7 @@ public class MLSStatusIsNotZero extends KGRStatusState{
 
 	@Override
 	public void kgrStatusIsFourExecution() {
+		System.out.println("Ejecutando kgrStatusIsFourExecution de " + this.getClass().getName());
 		//kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
 				"R", "S");

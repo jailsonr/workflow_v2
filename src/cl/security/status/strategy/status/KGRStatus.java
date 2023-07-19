@@ -63,6 +63,7 @@ public class KGRStatus implements StatusStrategy{
 			cs.execute();
 			status = cs.getInt(7);
 		} catch (SQLException e2) {
+			e2.printStackTrace();
 		}
 
 		return status;

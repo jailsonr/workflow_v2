@@ -22,6 +22,7 @@ public abstract class KGRStatusState {
 			kgrStatusIsThreeExecution();
 			break;
 		case 4:
+			kgrStatusIsFourExecution();
 			break;
 
 		default:
