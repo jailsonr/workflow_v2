@@ -42,6 +42,7 @@ public class KGRStatusValue {
 		} catch (SQLException e) {
 		}
 		try {
+			System.out.println("Ejecutando " +  PropertiesUtil.FLAGS + " DealId: " + dealId);
 			cs.execute();
 		} catch (SQLException e) {
 		}
@@ -61,6 +62,7 @@ public class KGRStatusValue {
 		} catch (SQLException e) {
 		}
 		try {
+			System.out.println("Ejecutando " +  PropertiesUtil.DEAL + " DealId: " + dealId);
 			stmt.executeUpdate(queryUpdateRepair);
 
 		} catch (SQLException e) {
@@ -90,11 +92,11 @@ public class KGRStatusValue {
 		}
 
 		try {
+			System.out.println("Ejecutando " +  PropertiesUtil.EDAI + " DealId: " + dealsId);
 			cs.execute();
 		} catch (SQLException e) {
 		}
 
-		System.out.println("Ejecutado correctamente WKF_ExceededDeals_acceptanceInsert");
 	}
 
 }

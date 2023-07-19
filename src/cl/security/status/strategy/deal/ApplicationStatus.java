@@ -72,7 +72,7 @@ public class ApplicationStatus implements Runnable {
 
 			RepairEnum.valueOf(reparo).queryUpdateRepair(repair);
 
-			System.out.println("Ejecutando " + strategy.toString());
+//			System.out.println("Ejecutando " + strategy.toString());
 		}
 
 	}
@@ -89,7 +89,7 @@ public class ApplicationStatus implements Runnable {
 
 				int mlsStatusValue = strategy.getStatus(deal);
 
-				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 1);
+				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, deal.getRetries());
 
 				while (retryLogic.shouldRetry()) {
 					retryLogic.retryImpl(() -> {
@@ -106,24 +106,27 @@ public class ApplicationStatus implements Runnable {
 
 							KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue)
 									.setState(mlsStatusValue, deal);
-							
+
 							int krgStatusValueInt = KGRStatusValueEnum.valueOf(krgStatusValue).num;
 
-							System.out.println("KGR Status es " + krgStatusValueInt);
-							
+							System.out.println("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue
+									+ " para deal " + deal.getDealId());
+
 							kgrStatusState.executeUpdates(krgStatusValueInt);
-							
-							if (krgStatusValueInt != 0 || krgStatusValueInt != 1) {
-								System.out.println(String.format("Deal %s no ha ejecutado nada.", deal.getDealId()));
+
+							if (krgStatusValueInt >= 2) {
+								retryLogic.stopExecution();
+								System.out.println("Detiene Reintentos");
+//								System.out.println(String.format("Deal %s VAMOS A REINTENTAR", deal.getDealId()));
 							} else {
-								System.out.println(String.format("Deal %s ya ha ejecutado", deal.getDealId()));
-								retryLogic.retryAttempts = 0;
+//								System.out.println(String.format("Deal %s ya ha ejecutado", deal.getDealId()));
 							}
 
 							processedDealSet.add(deal);
 						}
-						
-						retryLogic.dealReties =+ 1;
+
+//						retryLogic.dealReties = retryLogic.dealReties + 1;
+						System.out.println("Retry Attemps: " + retryLogic.getRetryAttempts() + " Deal: " + deal.getDealId());
 
 //						System.out.println(deal.getDealId() + " .");
 
@@ -137,13 +140,15 @@ public class ApplicationStatus implements Runnable {
 
 				}
 
+				System.out.println("SÍ SE TERMINÓ");
+
 			});
 
-			System.out.println("Borrados");
-			processedDealSet.forEach(System.out::println);
-			
-			retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 1);
-			
+//			System.out.println("Borrados");
+//			processedDealSet.forEach(System.out::println);
+
+			retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, 1);
+
 			try {
 				removeDealsFromSet(processedDealSet);
 			} catch (Exception e) {
@@ -151,11 +156,10 @@ public class ApplicationStatus implements Runnable {
 					removeDealsFromSet(processedDealSet);
 				});
 			}
-			
 
 		};
 	}
-	
+
 	private void removeDealsFromSet(Set<Deal> processedDealSet) {
 		DealDao.dealSet.removeAll(processedDealSet);
 	}

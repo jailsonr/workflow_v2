@@ -16,13 +16,13 @@ public class RepairMLS extends Repair {
 	}
 
 	@Override
-	public void createKisFile() {
+	public void createKisFile(Params p) {
 		String fileName = null;
 		KisFileDAO create = new KisFileDAO();
 		int dealsId = create.getKISDealId(p.getKdbTablesId(), p.getDealsId());
 		fileName = create.importFile(dealsId, p.getKdbTablesId(), 0, "Y");
 
-		super.deleteMessage();
+		super.deleteMessage(p);
 
 	}
 
@@ -32,7 +32,7 @@ public class RepairMLS extends Repair {
 		CallableStatement cs = null;
 
 		System.out.println("Ejecutando " + PropertiesUtil.FLAGS + " DealId: " + dealId);
-		String storeProcedure = "{call Kustom.." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
+		String storeProcedure = "{call Kustom.dbo." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
 
 		try {
 			cs = getConn().prepareCall(storeProcedure);

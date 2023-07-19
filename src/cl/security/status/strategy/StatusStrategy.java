@@ -26,7 +26,7 @@ public interface StatusStrategy {
 		CallableStatement cs = null;
 		ResultSet rs = null;
 
-		String storeProcedure = "{call " + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
+		String storeProcedure = "{call Kustom.dbo." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
 
 		try {
 			cs = getConn().prepareCall(storeProcedure);
@@ -46,6 +46,7 @@ public interface StatusStrategy {
 		try {
 			rs = cs.executeQuery();
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 
 		try {

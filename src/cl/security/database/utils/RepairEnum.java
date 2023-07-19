@@ -11,9 +11,10 @@ public enum RepairEnum {
 		public void queryUpdateRepair(Repair r) {
 			
 			if (r instanceof RepairKGR) {
-				r.queryUpdateRepair(r.p.getDealsId(), r.p.getKdbTablesId(), N.toString(), N.toString(), N.toString()).createKisFile();
+				r.queryUpdateRepair(r.p.getDealsId(), r.p.getKdbTablesId(), N.toString(), N.toString(), N.toString()).createKisFile(r.p);
+				r.queryUpdateWKFDealsList(0, 0, 0);
 			} else if (r instanceof RepairMLS) {
-				r.queryUpdateRepair(r.p.getDealsId(), r.p.getKdbTablesId(), N.toString(), N.toString(), N.toString()).createKisFile();
+				r.queryUpdateRepair(r.p.getDealsId(), r.p.getKdbTablesId(), N.toString(), N.toString(), N.toString()).createKisFile(r.p);
 			}
 			
 			

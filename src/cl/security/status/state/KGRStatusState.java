@@ -1,8 +1,11 @@
 package cl.security.status.state;
 
+import cl.security.model.Params;
+
 public abstract class KGRStatusState {
 	
 	public KGRStatusValue kgrStatusValue;
+	protected Params p;
 	
 	public KGRStatusState(KGRStatusValue kgrStatusValue) {
 		this.kgrStatusValue = kgrStatusValue;
@@ -33,6 +36,5 @@ public abstract class KGRStatusState {
 	public abstract void kgrStatusIsTwoExecution();
 	public abstract void kgrStatusIsThreeExecution();
 	public abstract void kgrStatusIsFourExecution();
-
-
+	
 }

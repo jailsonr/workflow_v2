@@ -16,13 +16,15 @@ public class RepairKGR extends Repair {
 	}
 
 	@Override
-	public void createKisFile() {
+	public void createKisFile(Params p) {
 		String fileName = null;
 		KisFileDAO create = new KisFileDAO();
 		int dealsId = create.getKISDealId(p.getKdbTablesId(), p.getDealsId());
 		fileName = create.importFile(dealsId, p.getKdbTablesId(), 0, "Y");
+		
+		System.out.println("Creando archivo KIS");
 
-		super.deleteMessage();
+		super.deleteMessage(p);
 
 	}
 
