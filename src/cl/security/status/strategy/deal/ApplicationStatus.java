@@ -81,88 +81,22 @@ public class ApplicationStatus implements Runnable {
 
 		return () -> {
 
-			Set<Deal> processedDealSet = new HashSet<>();
-
 			DealDao.dealSet.forEach(deal -> {
+				
+				myThread mThread = new myThread(strategy, deal, retryLogic, numToWord);
 
-				strategy = CheckJob.status.get(Constants.MLS);
-
-				int mlsStatusValue = strategy.getStatus(deal);
-
-				retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, deal.getRetries());
-
-				while (retryLogic.shouldRetry()) {
-					retryLogic.retryImpl(() -> {
-
-						boolean statusReadyMLS = strategy.getStatusReady(deal);
-
-//						System.out.println(String.format("Deal %s con retries ", deal.getDealId(), retryLogic.retryAttempts));
-						// Loop de 6 reintentos hasta que el statusReady sea true
-						if (statusReadyMLS) {
-
-							strategy = CheckJob.status.get(Constants.KRG);
-
-							String krgStatusValue = numToWord.get(strategy.getStatus(deal));
-
-							KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue)
-									.setState(mlsStatusValue, deal);
-
-							int krgStatusValueInt = KGRStatusValueEnum.valueOf(krgStatusValue).num;
-
-							System.out.println("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue
-									+ " para deal " + deal.getDealId());
-
-							kgrStatusState.executeUpdates(krgStatusValueInt);
-
-							if (krgStatusValueInt >= 2) {
-								retryLogic.stopExecution();
-								System.out.println("Detiene Reintentos");
-//								System.out.println(String.format("Deal %s VAMOS A REINTENTAR", deal.getDealId()));
-							} else {
-//								System.out.println(String.format("Deal %s ya ha ejecutado", deal.getDealId()));
-							}
-
-							processedDealSet.add(deal);
-						}
-
-//						retryLogic.dealReties = retryLogic.dealReties + 1;
-						System.out.println("Retry Attemps: " + retryLogic.getRetryAttempts() + " Deal: " + deal.getDealId());
-
-//						System.out.println(deal.getDealId() + " .");
-
-					});
-				}
-
-				if (!retryLogic.shouldRetry()) {
-					System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
-					// Despues de los 6 intentos se elimina objeto de la lista
-					processedDealSet.add(deal);
-
-				}
-
-				System.out.println("SÍ SE TERMINÓ");
+				new Thread(mThread).start();
 
 			});
 
 //			System.out.println("Borrados");
 //			processedDealSet.forEach(System.out::println);
 
-			retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, 1);
-
-			try {
-				removeDealsFromSet(processedDealSet);
-			} catch (Exception e) {
-				retryLogic.retryImpl(() -> {
-					removeDealsFromSet(processedDealSet);
-				});
-			}
+			
 
 		};
 	}
 
-	private void removeDealsFromSet(Set<Deal> processedDealSet) {
-		DealDao.dealSet.removeAll(processedDealSet);
-	}
 
 //	private Runnable removeDealFromSet(Thread t) {
 //		return () -> {
@@ -175,5 +109,101 @@ public class ApplicationStatus implements Runnable {
 //			}
 //		};
 //	}
+
+}
+
+class myThread implements Runnable {
+
+	StatusStrategy strategy;
+	Deal deal;
+	RetryLogic retryLogic;
+	private Map<Integer, String> numToWord;
+	Set<Deal> processedDealSet = new HashSet<>();
+
+	private void removeDealsFromSet(Set<Deal> processedDealSet) {
+		DealDao.dealSet.removeAll(processedDealSet);
+		processedDealSet.forEach(e -> System.out.println("Se eliminó deal: " + e.getDealId()));
+	}
+	
+	public myThread(StatusStrategy strategy, Deal deal, RetryLogic retryLogic, Map<Integer, String> numToWord) {
+		super();
+		this.strategy = strategy;
+		this.deal = deal;
+		this.retryLogic = retryLogic;
+		this.numToWord = numToWord;
+	}
+
+	@Override
+	public void run() {
+
+		strategy = CheckJob.status.get(Constants.MLS);
+
+		int mlsStatusValue = strategy.getStatus(deal);
+
+		retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 5000, deal.getRetries());
+
+		while (retryLogic.shouldRetry()) {
+			retryLogic.retryImpl(() -> {
+
+				boolean statusReadyMLS = strategy.getStatusReady(deal);
+
+//				System.out.println(String.format("Deal %s con retries ", deal.getDealId(), retryLogic.retryAttempts));
+				// Loop de 6 reintentos hasta que el statusReady sea true
+				if (statusReadyMLS) {
+
+					strategy = CheckJob.status.get(Constants.KRG);
+
+					String krgStatusValue = numToWord.get(strategy.getStatus(deal));
+
+					KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue).setState(mlsStatusValue,
+							deal);
+
+					int krgStatusValueInt = KGRStatusValueEnum.valueOf(krgStatusValue).num;
+
+					System.out.println("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue
+							+ " para deal " + deal.getDealId());
+
+					kgrStatusState.executeUpdates(krgStatusValueInt);
+
+					if (krgStatusValueInt >= 2) {
+						retryLogic.stopExecution();
+						System.out.println("Detiene Reintentos");
+						System.out.println("Deal: " + deal.getDealId() + " Ya se ejecutó");
+//						System.out.println(String.format("Deal %s VAMOS A REINTENTAR", deal.getDealId()));
+					} else {
+						System.out.println("Retry Attemps: " + retryLogic.getRetryAttempts() + " Deal: " + deal.getDealId() + " todavia se ejecuta");
+//						System.out.println(String.format("Deal %s ya ha ejecutado", deal.getDealId()));
+					}
+
+					processedDealSet.add(deal);
+				}
+
+//				retryLogic.dealReties = retryLogic.dealReties + 1;
+
+//				System.out.println(deal.getDealId() + " .");
+
+			});
+		}
+
+		if (!retryLogic.shouldRetry()) {
+			System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
+			// Despues de los 6 intentos se elimina objeto de la lista
+			processedDealSet.add(deal);
+
+		}
+		
+		retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, 1);
+
+		try {
+			removeDealsFromSet(processedDealSet);
+		} catch (Exception e) {
+			retryLogic.retryImpl(() -> {
+				removeDealsFromSet(processedDealSet);
+			});
+		}
+
+//		System.out.println("SÍ SE TERMINÓ");
+
+	}
 
 }
