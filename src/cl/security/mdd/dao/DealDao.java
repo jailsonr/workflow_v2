@@ -1,5 +1,6 @@
 package cl.security.mdd.dao;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,10 +20,12 @@ public final class DealDao {
 	public static void loadDeals() throws SQLException {
 		Connection con = DatabaseConnection.getInstance().getConnection();
 		
-		Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY,
-				ResultSet.HOLD_CURSORS_OVER_COMMIT);
+		CallableStatement cs = con.prepareCall(QueryEnum.GET_DEAL_LIST.query);
+		
+		cs.setString(1, "P");
+		cs.setInt(2, 0);
 
-		ResultSet rs = stmt.executeQuery(QueryEnum.GET_DEAL_LIST.query);
+		ResultSet rs = cs.executeQuery();
 		
 		while (rs.next()) {
 				Deal deal = new Deal();
