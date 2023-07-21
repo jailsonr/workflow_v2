@@ -28,16 +28,15 @@ public class CheckJob implements Runnable {
 	public void run() {
 
 		CheckMessagesDB checkMessages = new CheckMessagesDB();
-		checkMessages.setIfIsTimeToExecute();
+		checkMessages.buildParams();
 
-		StatusStrategy strategy;
-
-		if (checkMessages.isTimeToExecute()) {
-
+		checkMessages.getParamSet().forEach(param -> {
 			// Se llena el hashmap con las clases estrategias que estan en el package
 			// cl.security.status.strategy.status
 			// No se deben crear clases que no sean estrategia dentro de ese package ni
 			// tampoco packages dentro de ese package
+
+			StatusStrategy strategy;
 			try {
 				status = getInstatiatedStatusClasses();
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
@@ -49,14 +48,13 @@ public class CheckJob implements Runnable {
 			// KGR
 			ApplicationStatus appStatus = new ApplicationStatus();
 
-			String dataBaseName = checkMessages.getParams().getDataBaseName();
+			String dataBaseName = param.getDataBaseName();
 
 			// Definiendo estrategia para el objeto que calza con el nombre que viene de la
 			// base de datos
 			strategy = status.get(dataBaseName.toLowerCase());
-			new Thread(appStatus.process(strategy, checkMessages)).start();
-
-		}
+			new Thread(appStatus.process(strategy, param)).start();
+		});
 
 	}
 

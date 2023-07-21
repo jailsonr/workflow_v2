@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import cl.security.database.utils.RepairEnum;
 import cl.security.mdd.dao.DealDao;
@@ -15,7 +17,6 @@ import cl.security.mdd.enums.KGRStatusValueEnum;
 import cl.security.mdd.retries.RetryLogic;
 import cl.security.model.Deal;
 import cl.security.model.Params;
-import cl.security.observer.listeners.CheckMessagesDB;
 import cl.security.quartz.scheduler.CheckJob;
 import cl.security.status.state.KGRStatusState;
 import cl.security.status.strategy.StatusStrategy;
@@ -30,10 +31,11 @@ public class ApplicationStatus implements Runnable {
 	private StatusStrategy strategy = null;
 	private Params p;
 	RetryLogic retryLogic;
+	static Set<Deal> processedDealSet = new HashSet<>();
 
-	public ApplicationStatus process(StatusStrategy strategy, CheckMessagesDB checkMessages) {
+	public ApplicationStatus process(StatusStrategy strategy, Params p) {
 		this.strategy = strategy;
-		this.p = checkMessages.getParams();
+		this.p = p;
 
 		numToWord.put(0, "ZERO");
 		numToWord.put(1, "ONE");
@@ -52,51 +54,83 @@ public class ApplicationStatus implements Runnable {
 			try {
 				DealDao.loadDeals();
 			} catch (SQLException e1) {
+				e1.printStackTrace();
 			}
 
-			Thread dealSetThread = new Thread(dealSetProcess());
+			ExecutorService executor = Executors.newFixedThreadPool(DealDao.dealSet.size());
+
+			DealDao.dealSet.forEach(deal -> {
+
+				myThread mThread = new myThread(strategy, deal, retryLogic, numToWord);
+
+				executor.execute(mThread);
+
+			});
+
+			executor.shutdown();
+			retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, 1);
+
+			if (executor.isTerminated()) {
+
+				try {
+					removeDealsFromSet();
+				} catch (Exception e) {
+					System.out.println("Ha fallado la remocion del dealSet. Excepcion: " + e.getMessage());
+					System.out.println("Se vuelve a intentar remocion");
+					retryLogic.retryImpl(() -> {
+						removeDealsFromSet();
+					});
+				}
+			}
+
+//			Thread dealSetThread = new Thread(dealSetProcess());
 //			Thread removeDealsThread = new Thread(removeDealFromSet(dealSetThread));
 
-			dealSetThread.start();
+//			dealSetThread.start();
 //			removeDealsThread.start();
 
 		} else {
 
-			// Reparo puede ser N o R
-			String reparo = strategy.statusFromCustomWindow(p);
+			Thread mlsOrKgrThread = new Thread(() -> {
+				// Reparo puede ser N o R
+				String reparo = strategy.statusFromCustomWindow(p);
 
-			strategy.acceptanceLogger(p);
+				strategy.acceptanceLogger(p);
 
-			Repair repair = strategy instanceof KGRStatus ? new RepairKGR().build(p, reparo)
-					: new RepairMLS().build(p, reparo);
+				Repair repair = strategy instanceof KGRStatus ? new RepairKGR().build(p, reparo)
+						: new RepairMLS().build(p, reparo);
 
-			RepairEnum.valueOf(reparo).queryUpdateRepair(repair);
+				RepairEnum.valueOf(reparo).queryUpdateRepair(repair);
+			});
 
 //			System.out.println("Ejecutando " + strategy.toString());
 		}
 
 	}
 
-	private Runnable dealSetProcess() {
+//	private Runnable dealSetProcess() {
+//
+//		return () -> {
+//
+//			DealDao.dealSet.forEach(deal -> {
+//
+//				myThread mThread = new myThread(strategy, deal, retryLogic, numToWord);
+//
+//				new Thread(mThread).start();
+//
+//			});
+//
+////			System.out.println("Borrados");
+////			processedDealSet.forEach(System.out::println);
+//
+//		};
+//	}
 
-		return () -> {
-
-			DealDao.dealSet.forEach(deal -> {
-				
-				myThread mThread = new myThread(strategy, deal, retryLogic, numToWord);
-
-				new Thread(mThread).start();
-
-			});
-
-//			System.out.println("Borrados");
-//			processedDealSet.forEach(System.out::println);
-
-			
-
-		};
+	private static void removeDealsFromSet() {
+		DealDao.dealSet.removeAll(processedDealSet);
+		processedDealSet.forEach(e -> System.out.println("Se eliminó deal: " + e.getDealId()));
+		processedDealSet = new HashSet<>();
 	}
-
 
 //	private Runnable removeDealFromSet(Thread t) {
 //		return () -> {
@@ -118,13 +152,12 @@ class myThread implements Runnable {
 	Deal deal;
 	RetryLogic retryLogic;
 	private Map<Integer, String> numToWord;
-	Set<Deal> processedDealSet = new HashSet<>();
 
 	private void removeDealsFromSet(Set<Deal> processedDealSet) {
 		DealDao.dealSet.removeAll(processedDealSet);
 		processedDealSet.forEach(e -> System.out.println("Se eliminó deal: " + e.getDealId()));
 	}
-	
+
 	public myThread(StatusStrategy strategy, Deal deal, RetryLogic retryLogic, Map<Integer, String> numToWord) {
 		super();
 		this.strategy = strategy;
@@ -171,11 +204,12 @@ class myThread implements Runnable {
 						System.out.println("Deal: " + deal.getDealId() + " Ya se ejecutó");
 //						System.out.println(String.format("Deal %s VAMOS A REINTENTAR", deal.getDealId()));
 					} else {
-						System.out.println("Retry Attemps: " + retryLogic.getRetryAttempts() + " Deal: " + deal.getDealId() + " todavia se ejecuta");
+						System.out.println("Retry Attemps: " + retryLogic.getRetryAttempts() + " Deal: "
+								+ deal.getDealId() + " todavia se ejecuta");
 //						System.out.println(String.format("Deal %s ya ha ejecutado", deal.getDealId()));
 					}
 
-					processedDealSet.add(deal);
+					ApplicationStatus.processedDealSet.add(deal);
 				}
 
 //				retryLogic.dealReties = retryLogic.dealReties + 1;
@@ -188,17 +222,19 @@ class myThread implements Runnable {
 		if (!retryLogic.shouldRetry()) {
 			System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
 			// Despues de los 6 intentos se elimina objeto de la lista
-			processedDealSet.add(deal);
+			ApplicationStatus.processedDealSet.add(deal);
 
+			// ACTUALIZAR DEAL A P EN LA BD
+			strategy.updateStatusDealList(deal);
 		}
-		
+
 		retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, 1);
 
 		try {
-			removeDealsFromSet(processedDealSet);
+			removeDealsFromSet(ApplicationStatus.processedDealSet);
 		} catch (Exception e) {
 			retryLogic.retryImpl(() -> {
-				removeDealsFromSet(processedDealSet);
+				removeDealsFromSet(ApplicationStatus.processedDealSet);
 			});
 		}
 

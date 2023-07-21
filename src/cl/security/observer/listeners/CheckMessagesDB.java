@@ -4,19 +4,19 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Set;
 
 import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
 import cl.security.model.Params;
 
-public class CheckMessagesDB  {
-
-	private boolean isTimeToExecute = false;
+public class CheckMessagesDB {
 
 	private Connection con;
 	private Statement stmt;
 	private ResultSet rs = null;
 	private Params params;
+	private Set<Params> paramSet;
 
 	public CheckMessagesDB() {
 		try {
@@ -27,9 +27,7 @@ public class CheckMessagesDB  {
 		}
 	}
 
-	public void setIfIsTimeToExecute() {
-		// Hardcode - Aqui de sebe ir a la BD a revisar si hay data en la tabla y de ser
-		// asi se setea a true
+	public void buildParams() {
 
 		try {
 
@@ -38,14 +36,14 @@ public class CheckMessagesDB  {
 
 			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
 
-			if (rs.next()) {
-				setTimeToExecute(true);
-				
+			while (rs.next()) {
+
 				String arr[] = rs.getString(3).split("\\s+");
-				
+
 				params = new Params(arr[0], Integer.parseInt(arr[1].trim()), Integer.parseInt(arr[2].trim()));
-			} else {
-				setTimeToExecute(false);
+
+				paramSet.add(params);
+
 			}
 
 		} catch (SQLException e) {
@@ -55,16 +53,12 @@ public class CheckMessagesDB  {
 
 	}
 
-	public Params getParams() {
-		return params;
+	public Set<Params> getParamSet() {
+		return paramSet;
 	}
 
-	public boolean isTimeToExecute() {
-		return isTimeToExecute;
-	}
-
-	private void setTimeToExecute(boolean isTimeToExecute) {
-		this.isTimeToExecute = isTimeToExecute;
+	public ResultSet getRs() {
+		return rs;
 	}
 
 }

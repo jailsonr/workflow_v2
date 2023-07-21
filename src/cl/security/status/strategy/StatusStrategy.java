@@ -89,5 +89,7 @@ public interface StatusStrategy {
 		return status != 0;
 
 	};
+	
+	boolean updateStatusDealList(Deal deal);
 
 }

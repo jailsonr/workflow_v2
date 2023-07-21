@@ -69,4 +69,10 @@ public class KGRStatus implements StatusStrategy{
 		return status;
 	}
 
+	@Override
+	public boolean updateStatusDealList(Deal deal) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
