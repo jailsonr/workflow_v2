@@ -7,7 +7,6 @@ import cl.security.database.utils.QueryEnum;
 import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.status.strategy.StatusStrategy;
-import cl.security.utils.PropertiesUtil;
 
 public class KGRStatus implements StatusStrategy{
 	
@@ -16,7 +15,8 @@ public class KGRStatus implements StatusStrategy{
 	@Override
 	public void acceptanceLogger(Params p) {
 		
-		final String spCall = "{call Kustom.." + PropertiesUtil.EDAI + "(?,?,?)}";
+		//final String spCall = "{call Kustom.." + PropertiesUtil.EDAI + "(?,?,?)}";
+		final String spCall = QueryEnum.EXCEEDED_DEALS_ACCEPTANCE_INSERT.query;
 		CallableStatement callableStatement = null;
 		try {
 			callableStatement = getConn().prepareCall(spCall);

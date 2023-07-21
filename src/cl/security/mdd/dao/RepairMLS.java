@@ -3,8 +3,8 @@ package cl.security.mdd.dao;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 
+import cl.security.database.utils.QueryEnum;
 import cl.security.model.Params;
-import cl.security.utils.PropertiesUtil;
 
 public class RepairMLS extends Repair {
 
@@ -31,9 +31,11 @@ public class RepairMLS extends Repair {
 
 		CallableStatement cs = null;
 
-		System.out.println("Ejecutando " + PropertiesUtil.FLAGS + " DealId: " + dealId);
-		String storeProcedure = "{call Kustom.dbo." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
-
+		//System.out.println("Ejecutando " + PropertiesUtil.FLAGS + " DealId: " + dealId);
+		//String storeProcedure = "{call Kustom.dbo." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
+		System.out.println("Ejecutando " + QueryEnum.FLAGS_DEALS.query + " DealId: " + dealId);
+		String storeProcedure = QueryEnum.FLAGS_DEALS.query;
+		
 		try {
 			cs = getConn().prepareCall(storeProcedure);
 		} catch (SQLException e) {

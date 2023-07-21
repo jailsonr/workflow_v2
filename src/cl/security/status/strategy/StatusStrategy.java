@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import cl.security.database.DatabaseConnection;
+import cl.security.database.utils.QueryEnum;
 import cl.security.model.Deal;
 import cl.security.model.Params;
-import cl.security.utils.PropertiesUtil;
 
 public interface StatusStrategy {
 
@@ -26,7 +26,8 @@ public interface StatusStrategy {
 		CallableStatement cs = null;
 		ResultSet rs = null;
 
-		String storeProcedure = "{call Kustom.dbo." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
+		//String storeProcedure = "{call Kustom.dbo." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
+		String storeProcedure = QueryEnum.FLAGS_DEALS.query;
 
 		try {
 			cs = getConn().prepareCall(storeProcedure);
@@ -73,7 +74,8 @@ public interface StatusStrategy {
 
 		CallableStatement cs = null;
 		int status = 0;
-		String storeProcedure = "{call Kustom.." + PropertiesUtil.MLSRESULT + "(?,?,?,?)}";
+		//String storeProcedure = "{call Kustom.." + PropertiesUtil.MLSRESULT + "(?,?,?,?)}";
+		String storeProcedure = QueryEnum.MLS_DEAL_RESULT_GET.query;
 
 		try {
 			cs = getConn().prepareCall(storeProcedure);

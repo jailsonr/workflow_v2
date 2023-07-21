@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cl.security.database.DatabaseConnection;
+import cl.security.database.utils.QueryEnum;
 import cl.security.model.KISFile;
 import cl.security.utils.Constants;
-import cl.security.utils.PropertiesUtil;
 
 public class KisFileDAO {
 	public static final String DATE_FORMAT = "dd-MM-yyyy_HH:mm:ss.SSSSSS";
@@ -38,8 +38,9 @@ public class KisFileDAO {
 		final PrintWriter salida = null;
 		KGRRequest = null;
 
-		final String storeProcedure = "{call Kustom.." + PropertiesUtil.KISFIELDS + "(?,?,?)}";
-
+		//final String storeProcedure = "{call Kustom.." + PropertiesUtil.KISFIELDS + "(?,?,?)}";
+		final String storeProcedure = QueryEnum.IMPORT_FILE.query;
+		
 		CallableStatement cs = null;
 		ResultSet rs = null;
 
@@ -147,7 +148,8 @@ public class KisFileDAO {
 	}
 
 	public int getKISDealId(int kdbTableId, int dealId) {
-		final String storeProcedure = "{call " + PropertiesUtil.GETKISDEAL + "(?,?,?)}";
+		//final String storeProcedure = "{call " + PropertiesUtil.GETKISDEAL + "(?,?,?)}";
+		final String storeProcedure = QueryEnum.GET_KIS_DEAL_ID.query;
 		CallableStatement cs = null;
 		int dealsIdOut = 0;
 		try {
