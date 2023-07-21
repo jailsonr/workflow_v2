@@ -18,6 +18,8 @@ public final class Constants {
 	
 	public static final String MLS = "mls";
 	
+	public static final String KONDOR = "kondor";
+	
 	public static final String LOG4J = load.getProperties(CONFIGURACION, log).get("PropertiesLog4j").toString().trim();
 	
 	public static final String ROUTEKIS = load.getProperties(CONFIGURACION, log).get("RouteKisFile").toString().trim();
