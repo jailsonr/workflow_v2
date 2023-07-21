@@ -170,6 +170,13 @@ class myThread implements Runnable {
 					} else {
 						System.out.println("Retry Attemps: " + retryLogic.getRetryAttempts() + " Deal: "
 								+ deal.getDealId() + " todavia se ejecuta");
+
+						if (retryLogic.getRetryAttempts() == 0) {
+							// ACTUALIZAR DEAL A P EN LA BD
+							strategy = CheckJob.status.get(Constants.KONDOR);
+							strategy.updateStatusDealList(deal);
+						}
+
 //						System.out.println(String.format("Deal %s ya ha ejecutado", deal.getDealId()));
 					}
 
@@ -187,10 +194,6 @@ class myThread implements Runnable {
 			System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
 			// Despues de los 6 intentos se elimina objeto de la lista
 			processedDealSet.add(deal);
-
-			// ACTUALIZAR DEAL A P EN LA BD
-			strategy = CheckJob.status.get(Constants.KONDOR);
-			strategy.updateStatusDealList(deal);
 
 		}
 
