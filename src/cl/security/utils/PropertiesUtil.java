@@ -34,5 +34,5 @@ public final class PropertiesUtil {
 
 	public static final String DEALLISTUPDATE = load.getProperties(SPCALL, log).get("DEALLISTUPDATE").toString().trim();
 
-	public static final String DEALLISTUPDATESTATUS = load.getProperties(SPCALL, log).get("DEALLISTUPDATESTATUS").toString().trim();
+	public static final String DEALLISTUPDATESTATUS = load.getProperties(SPCALL, log).get("DEALLISTUPDATE").toString().trim();
 }

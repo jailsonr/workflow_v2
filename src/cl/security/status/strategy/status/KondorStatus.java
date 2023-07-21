@@ -3,6 +3,7 @@ package cl.security.status.strategy.status;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 
+import cl.security.database.utils.QueryEnum;
 import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.status.strategy.StatusStrategy;
@@ -37,13 +38,14 @@ public class KondorStatus implements StatusStrategy{
 
 		CallableStatement cs = null;
 		int status = 0;
-		String storeProcedure = "{call Kustom.." + PropertiesUtil.DEALLISTUPDATESTATUS + "(?,?,?)}";
+		String storeProcedure = QueryEnum.DEAL_LIST_UPDATE.query;
 		
 		try {
 			cs = getConn().prepareCall(storeProcedure);
 			cs.setInt(1, deal.getDealId());
 			cs.setInt(2, deal.getKdbTableId());
 			cs.setDouble(3, deal.getTransactionId());
+			cs.setString(4, "P");
 			cs.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

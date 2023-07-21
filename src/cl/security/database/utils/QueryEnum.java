@@ -15,7 +15,7 @@ public enum QueryEnum {
 	EXCEEDED_DEALS_INSERT("{call " + PropertiesUtil.EDI + "(?,?,?,?,?)}"),
 	MLS_DEAL_RESULT_GET("{call " + PropertiesUtil.MLSRESULT + "(?,?,?,?)}"),
 	KGR_STATUS_GET("{call " + PropertiesUtil.KGRGET + "(?,?,?,?,?,?,?,?)}"),
-	DEAL_LIST_UPDATE("{call " + PropertiesUtil.DEALLISTUPDATE + "(?,?,?)}")
+	DEAL_LIST_UPDATE("{call " + PropertiesUtil.DEALLISTUPDATE + "(?,?,?,?)}")
 	;
 
 	public final String query;
