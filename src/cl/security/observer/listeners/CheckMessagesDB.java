@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.Set;
 
 import cl.security.database.DatabaseConnection;
@@ -16,7 +17,7 @@ public class CheckMessagesDB {
 	private Statement stmt;
 	private ResultSet rs = null;
 	private Params params;
-	private Set<Params> paramSet;
+	private Set<Params> paramSet = new HashSet<Params>();
 
 	public CheckMessagesDB() {
 		try {

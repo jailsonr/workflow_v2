@@ -23,8 +23,10 @@ public final class Constants {
 	public static final String LOG4J = load.getProperties(CONFIGURACION, log).get("PropertiesLog4j").toString().trim();
 	
 	public static final String ROUTEKIS = load.getProperties(CONFIGURACION, log).get("RouteKisFile").toString().trim();
+	//public static final String ROUTEKIS = "C:\\files\\";
 	
 	public static final String ROUTETEMPLATES = load.getProperties(CONFIGURACION, log).get("RouteTemplates").toString().trim();
+	//public static final String ROUTETEMPLATES = "C:\\files\\";
 	
 	public static final String RETRIES = load.getProperties(CONFIGURACION, log).get("Retries").toString().trim();
 

@@ -27,6 +27,8 @@ public final class PropertiesUtil {
 	public static final String GETKISDEAL = load.getProperties(SPCALL, log).get("GETKISDEAL").toString().trim();
 
 	public static final String DEAL = load.getProperties(SPCALL, log).get("DealList").toString().trim();
+	
+	public static final String DEALTABLA = load.getProperties(SPCALL, log).get("DealListTabla").toString().trim();
 
 	public static final String MESSAGES = load.getProperties(SPCALL, log).get("MESSAGES").toString().trim();
 

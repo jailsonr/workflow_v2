@@ -5,9 +5,9 @@ import cl.security.utils.PropertiesUtil;
 public enum QueryEnum {
 
 	VERIFY_MESSAGES("SELECT * FROM " + PropertiesUtil.MESSAGES),
-    GET_DEAL_LIST("call " + PropertiesUtil.DEAL + "(??)"),
+    GET_DEAL_LIST("{call " + PropertiesUtil.DEAL + "(?,?)}"),
     FLAGS_DEALS("{call " + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}"),
-    MESSAGES_IN_PROGRESS_DELETE("{call " + PropertiesUtil.REGISTRYDELETE + "(?,?)}"),
+    MESSAGES_IN_PROGRESS_DELETE("{call " + PropertiesUtil.REGISTRYDELETE + "(?,?,?)}"),
     IMPORT_FILE("{call "+ PropertiesUtil.KISFIELDS + "(?,?,?)}"),
     GET_KIS_DEAL_ID("{call "+ PropertiesUtil.GETKISDEAL + "(?,?,?)}"),
     MLS_STATUS_GET("{call " + PropertiesUtil.MLSGET + "(?,?,?)}"),

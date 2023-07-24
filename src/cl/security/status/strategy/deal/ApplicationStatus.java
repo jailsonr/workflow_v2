@@ -115,7 +115,6 @@ class myThread implements Runnable {
 	Deal deal;
 	RetryLogic retryLogic;
 	private Map<Integer, String> numToWord;
-	Set<Deal> processedDealSet = new HashSet<>();
 
 	private void removeDealsFromSet(Set<Deal> processedDealSet) {
 		DealDao.dealSet.removeAll(processedDealSet);
@@ -132,6 +131,8 @@ class myThread implements Runnable {
 
 	@Override
 	public void run() {
+		
+		Set<Deal> processedDealSet = new HashSet<>();
 
 		strategy = CheckJob.status.get(Constants.MLS);
 

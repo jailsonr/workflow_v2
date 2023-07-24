@@ -13,7 +13,7 @@ public class MLSStatusIsNotZero extends KGRStatusState{
 	public MLSStatusIsNotZero(KGRStatusValue kgrStatusValue) {
 		super(kgrStatusValue);
 		this.deal = kgrStatusValue.deal;
-		p = new Params(null, deal.getKdbTableId(), deal.getDealId());
+		p = new Params("Kondor", deal.getKdbTableId(), deal.getDealId());
 	}
 
 	@Override

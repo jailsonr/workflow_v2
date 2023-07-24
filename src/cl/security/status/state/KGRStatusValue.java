@@ -53,7 +53,7 @@ public class KGRStatusValue {
 	public boolean queryUpdateWKFDealsList(int dealId, int kdbTableId, int transactionId) {
 		Statement stmt = null;
 
-		String queryUpdateRepair = "UPDATE " + PropertiesUtil.DEAL + " SET Status = 'T' WHERE DealId = " + dealId
+		String queryUpdateRepair = "UPDATE " + PropertiesUtil.DEALTABLA + " SET Status = 'T' WHERE DealId = " + dealId
 				+ " AND KdbTableId = " + kdbTableId + " AND TransactionId = " + transactionId;
 
 		try {
@@ -62,7 +62,7 @@ public class KGRStatusValue {
 		} catch (SQLException e) {
 		}
 		try {
-			System.out.println("Ejecutando " +  PropertiesUtil.DEAL + " DealId: " + dealId);
+			System.out.println("Ejecutando " +  PropertiesUtil.DEALTABLA + " DealId: " + dealId);
 			stmt.executeUpdate(queryUpdateRepair);
 
 		} catch (SQLException e) {

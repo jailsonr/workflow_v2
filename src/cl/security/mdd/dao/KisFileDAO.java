@@ -122,22 +122,22 @@ public class KisFileDAO {
 		final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss.SSSSSS");
 		final Calendar cal = Calendar.getInstance();
 		final String Date = sdf.format(cal.getTime());
-		final String FileNameCreate = String.valueOf(this.routeKisFile) + template + "_" + dealId + "_" + Date;
+		final String FileNameCreate = String.valueOf(this.routeKisFile) + template + "_" + dealId + "_" + Date.replace(":", "_");
 		BufferedReader reader = null;
 		PrintWriter writer = null;
 		String line = null;
 		final File In = new File(String.valueOf(this.routeTemplates) + template);
 		System.out.println(routeKisFile);
 		System.out.println(routeTemplates);
-
 		final File Out = new File(FileNameCreate);
 		try {
 			reader = new BufferedReader(new FileReader(In));
+			writer = new PrintWriter(new FileWriter(Out));
+			while ((line = reader.readLine()) != null) {
+				writer.println(line.replaceAll("#DealId#", dealId2));
+			}
 		} catch (FileNotFoundException e2) {
-		}
-		writer = new PrintWriter(new FileWriter(Out));
-		while ((line = reader.readLine()) != null) {
-			writer.println(line.replaceAll("#DealId#", dealId2));
+			e2.printStackTrace();
 		}
 		try {
 			reader.close();

@@ -25,6 +25,7 @@ public class DeleteMessage {
 
 				cs.setInt(1, p.getKdbTablesId());
 				cs.setInt(2, p.getDealsId());
+				cs.setString(3, p.getDataBaseName().toUpperCase());
 
 				System.out.println("Ejecutando DELETE_MESSAGE");
 				cs.executeUpdate();

@@ -17,7 +17,7 @@ public class MLSStatusIsZero extends KGRStatusState {
 	public MLSStatusIsZero(KGRStatusValue kgrStatusValue) {
 		super(kgrStatusValue);
 		this.deal = kgrStatusValue.deal;
-		p = new Params(null, deal.getKdbTableId(), deal.getDealId());
+		p = new Params("Kondor", deal.getKdbTableId(), deal.getDealId());
 	}
 
 	@Override
@@ -25,7 +25,6 @@ public class MLSStatusIsZero extends KGRStatusState {
 		
 		String reparo = "N";
 		
-		p = new Params("KGR", deal.getKdbTableId(), deal.getDealId());
 		
 		Repair repair = new RepairKGR().build(p, reparo);
 		
