@@ -8,7 +8,8 @@ public final class PropertiesUtil {
 
 	private static final Logger log = null;
 
-	public static final String SPCALL = "resources/SP.properties";
+	//public static final String SPCALL = "resources/SP.properties";
+	public static final String SPCALL = "/kondor/configuracion/Workflow/config/SP.properties";
 
 	public static final String KGRGET = load.getProperties(SPCALL, log).get("KGRGet").toString().trim();
 

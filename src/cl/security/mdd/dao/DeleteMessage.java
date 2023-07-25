@@ -4,9 +4,13 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
 import cl.security.model.Params;
+import cl.security.utils.Constants;
 
 public class DeleteMessage {
 
@@ -18,6 +22,9 @@ public class DeleteMessage {
 			CallableStatement cs = null;
 
 			String query = QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query;
+			
+			//PropertyConfigurator.configure(Constants.LOG4J);
+			//Logger log = Logger.getLogger(DeleteMessage.class);
 
 			try {
 
@@ -28,12 +35,15 @@ public class DeleteMessage {
 				cs.setString(3, p.getDataBaseName().toUpperCase());
 
 				System.out.println("Ejecutando DELETE_MESSAGE");
+				//log.info("Ejecutando DELETE_MESSAGE");
 				cs.executeUpdate();
 
 			} catch (SQLException e) {
 				System.out.println("error 2: " + e);
+				//log.error("error 2: " + e);
 			} finally {
 				System.out.println("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
+				//log.info("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
 			}
 
 		} catch (SQLException e) {

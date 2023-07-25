@@ -15,7 +15,6 @@ import cl.security.mdd.enums.KGRStatusValueEnum;
 import cl.security.mdd.retries.RetryLogic;
 import cl.security.model.Deal;
 import cl.security.model.Params;
-import cl.security.observer.listeners.CheckMessagesDB;
 import cl.security.quartz.scheduler.CheckJob;
 import cl.security.status.state.KGRStatusState;
 import cl.security.status.strategy.StatusStrategy;
@@ -48,7 +47,7 @@ public class ApplicationStatus implements Runnable {
 	public void run() {
 
 		if (strategy instanceof KondorStatus) {
-
+			System.out.println("KONDOR");
 			try {
 				DealDao.loadDeals();
 			} catch (SQLException e1) {
@@ -58,10 +57,11 @@ public class ApplicationStatus implements Runnable {
 //			Thread removeDealsThread = new Thread(removeDealFromSet(dealSetThread));
 
 			dealSetThread.start();
+			System.out.println("ACA");
 //			removeDealsThread.start();
 
 		} else {
-
+			System.out.println("KGR o MLS");
 			// Reparo puede ser N o R
 			String reparo = strategy.statusFromCustomWindow(p);
 
@@ -72,7 +72,7 @@ public class ApplicationStatus implements Runnable {
 
 			RepairEnum.valueOf(reparo).queryUpdateRepair(repair);
 
-//			System.out.println("Ejecutando " + strategy.toString());
+			System.out.println("Ejecutando " + strategy.toString());
 		}
 
 	}
@@ -82,6 +82,8 @@ public class ApplicationStatus implements Runnable {
 		return () -> {
 
 			DealDao.dealSet.forEach(deal -> {
+				
+				System.out.println("Runnable dealSetProcess");
 
 				myThread mThread = new myThread(strategy, deal, retryLogic, numToWord);
 
@@ -117,8 +119,11 @@ class myThread implements Runnable {
 	private Map<Integer, String> numToWord;
 
 	private void removeDealsFromSet(Set<Deal> processedDealSet) {
+		
 		DealDao.dealSet.removeAll(processedDealSet);
-		processedDealSet.forEach(e -> System.out.println("Se eliminó deal: " + e.getDealId()));
+		processedDealSet.forEach(e -> 
+			System.out.println("Se eliminó deal: " + e.getDealId())
+		);
 	}
 
 	public myThread(StatusStrategy strategy, Deal deal, RetryLogic retryLogic, Map<Integer, String> numToWord) {
@@ -195,6 +200,9 @@ class myThread implements Runnable {
 			System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
 			// Despues de los 6 intentos se elimina objeto de la lista
 			processedDealSet.add(deal);
+			
+			strategy = CheckJob.status.get(Constants.KONDOR);
+			strategy.updateStatusDealList(deal);
 
 		}
 

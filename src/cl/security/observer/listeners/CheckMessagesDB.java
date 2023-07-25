@@ -22,6 +22,7 @@ public class CheckMessagesDB {
 	public CheckMessagesDB() {
 		try {
 			con = DatabaseConnection.getInstance().getConnection();
+			System.out.println("CheckMessagesDB");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,6 +37,8 @@ public class CheckMessagesDB {
 					ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
 			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
+			
+			System.out.println("Verify_Messages");
 
 			while (rs.next()) {
 

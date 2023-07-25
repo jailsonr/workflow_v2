@@ -4,8 +4,12 @@ import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import cl.security.database.DatabaseConnection;
 import cl.security.model.Deal;
+import cl.security.utils.Constants;
 import cl.security.utils.PropertiesUtil;
 
 public class KGRStatusValue {
@@ -25,7 +29,12 @@ public class KGRStatusValue {
 	}
 
 	public boolean queryUpdateRepairKGR(int dealId, int kdbTableId, String repKGR, String repMLS, String envBO) {
+		
 		CallableStatement cs = null;
+		
+		//PropertyConfigurator.configure(Constants.LOG4J);
+		//Logger log = Logger.getLogger(KGRStatusValue.class);
+		
 		final String spCall = "{call Kustom.." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
 
 		try {
@@ -43,6 +52,7 @@ public class KGRStatusValue {
 		}
 		try {
 			System.out.println("Ejecutando " +  PropertiesUtil.FLAGS + " DealId: " + dealId);
+			//log.info("Ejecutando " +  PropertiesUtil.FLAGS + " DealId: " + dealId);
 			cs.execute();
 		} catch (SQLException e) {
 		}
@@ -52,6 +62,9 @@ public class KGRStatusValue {
 
 	public boolean queryUpdateWKFDealsList(int dealId, int kdbTableId, int transactionId) {
 		Statement stmt = null;
+		
+		//PropertyConfigurator.configure(Constants.LOG4J);
+		//Logger log = Logger.getLogger(KGRStatusValue.class);
 
 		String queryUpdateRepair = "UPDATE " + PropertiesUtil.DEALTABLA + " SET Status = 'T' WHERE DealId = " + dealId
 				+ " AND KdbTableId = " + kdbTableId + " AND TransactionId = " + transactionId;
@@ -63,6 +76,7 @@ public class KGRStatusValue {
 		}
 		try {
 			System.out.println("Ejecutando " +  PropertiesUtil.DEALTABLA + " DealId: " + dealId);
+			//log.info("Ejecutando " +  PropertiesUtil.DEALTABLA + " DealId: " + dealId);
 			stmt.executeUpdate(queryUpdateRepair);
 
 		} catch (SQLException e) {
@@ -72,9 +86,13 @@ public class KGRStatusValue {
 	}
 
 	public void overDraftLogger(String application, int transactionId, String action, int kdbTablesId, int dealsId) {
+		
+		//PropertyConfigurator.configure(Constants.LOG4J);
+		//Logger log = Logger.getLogger(KGRStatusValue.class);
+		
 		String storedProcedure = "{call " + PropertiesUtil.EDAI + "(?,?,?)}";
-		System.out
-				.println("WKF_ExceededDeals_acceptanceInsert: " + application + " - " + kdbTablesId + " - " + dealsId);
+		System.out.println("WKF_ExceededDeals_acceptanceInsert: " + application + " - " + kdbTablesId + " - " + dealsId);
+		//log.info("WKF_ExceededDeals_acceptanceInsert: " + application + " - " + kdbTablesId + " - " + dealsId);
 
 		CallableStatement cs = null;
 
@@ -93,6 +111,7 @@ public class KGRStatusValue {
 
 		try {
 			System.out.println("Ejecutando " +  PropertiesUtil.EDAI + " DealId: " + dealsId);
+			//log.info("Ejecutando " +  PropertiesUtil.EDAI + " DealId: " + dealsId);
 			cs.execute();
 		} catch (SQLException e) {
 		}

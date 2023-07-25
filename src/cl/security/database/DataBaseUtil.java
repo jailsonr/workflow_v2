@@ -43,6 +43,7 @@ public class DataBaseUtil {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Table Name: " + table);
+			
 		}
 		
 	}

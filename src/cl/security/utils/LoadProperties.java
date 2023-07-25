@@ -25,16 +25,16 @@ public class LoadProperties
 	         }
 	         catch (IOException ex) {
 	           
-	           log.info("Problemas al Leer las Propiedades");
+	           //log.info("Problemas al Leer las Propiedades");
 	         } 
 	         if (propers.isEmpty())
 	         {
-	           log.info("Propiedades vac�as");
+	           //log.info("Propiedades vac�as");
 	         }
 	       }
 	       catch (IOException ex) {
 	         
-	         log.info("Problemas al Leer las Propiedades");
+	         //log.info("Problemas al Leer las Propiedades");
 	       } finally {
 	 
 	         
@@ -44,31 +44,31 @@ public class LoadProperties
 	         }
 	         catch (IOException ex) {
 	           
-	           log.info("Problemas al Leer las Propiedades");
+	           //log.info("Problemas al Leer las Propiedades");
 	         } 
 	       } 
 	       return new HashMap<Object, Object>(propers);
 	     }
 	     catch (FileNotFoundException ex) {
 	       
-	       log.error("El archivo de Propiedades no existe");
+	       //log.error("El archivo de Propiedades no existe");
 	       return null;
 	     }
 	     catch (IOException e) {
 	       
-	       log.error("Problemas al Leer las Propiedades");
+	       //log.error("Problemas al Leer las Propiedades");
 	       return null;
 	     }
 	     catch (NullPointerException nulo) {
 	       
-	       log.error("Problemas al Leer las Propiedades");
+	       //log.error("Problemas al Leer las Propiedades");
 	       
 	       return null;
 	     }
 	     catch (Exception excep) {
 	 
 	       
-	       log.error("Problemas al Leer las Propiedades");
+	       //log.error("Problemas al Leer las Propiedades");
 	       return null;
 	     } 
 	   }

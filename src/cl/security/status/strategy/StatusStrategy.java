@@ -32,6 +32,8 @@ public interface StatusStrategy {
 		try {
 			cs = getConn().prepareCall(storeProcedure);
 		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("cs " + e.getMessage());
 		}
 		try {
 			cs.setString(1, "S");
@@ -42,24 +44,31 @@ public interface StatusStrategy {
 			cs.setString(6, null);
 
 		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("cs SETS " + e.getMessage());
 		}
 
 		try {
 			rs = cs.executeQuery();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("e.printStackTrace();" + e.getMessage());
 		}
 
 		try {
 			if (rs.next()) {
 				if (rs.getObject("RepMLS") != null) {
+					System.out.println("RepMLS");
 					return rs.getString("RepMLS");
 				} else if (rs.getObject("RepKGR") != null) {
+					System.out.println("RepKGR");
 					return rs.getString("RepKGR");
 				}
 				return "";
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("rs" + e.getMessage());
 		}
 
 		return "";

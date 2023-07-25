@@ -1,21 +1,8 @@
 package cl.security.quartz.scheduler;
 
 import static cl.security.utils.LoaderUtil.getInstatiatedStatusClasses;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
-import cl.security.database.DatabaseConnection;
-import cl.security.database.utils.QueryEnum;
 import cl.security.observer.listeners.CheckMessagesDB;
 import cl.security.status.strategy.StatusStrategy;
 import cl.security.status.strategy.deal.ApplicationStatus;
@@ -39,6 +26,7 @@ public class CheckJob implements Runnable {
 			StatusStrategy strategy;
 			try {
 				status = getInstatiatedStatusClasses();
+				System.out.println("StatusStrategy");
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -49,10 +37,14 @@ public class CheckJob implements Runnable {
 			ApplicationStatus appStatus = new ApplicationStatus();
 
 			String dataBaseName = param.getDataBaseName();
+			
+			System.out.println("appStatus");
 
 			// Definiendo estrategia para el objeto que calza con el nombre que viene de la
 			// base de datos
 			strategy = status.get(dataBaseName.toLowerCase());
+			System.out.println("strategy 1 " + strategy);
+			System.out.println("strategy 2 " + strategy.toString());
 			new Thread(appStatus.process(strategy, param)).start();
 		});
 
