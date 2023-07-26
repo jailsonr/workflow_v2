@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
 import cl.security.model.Params;
@@ -18,14 +20,14 @@ public class CheckMessagesDB {
 	private ResultSet rs = null;
 	private Params params;
 	private Set<Params> paramSet = new HashSet<Params>();
+	Logger log = Logger.getLogger(CheckMessagesDB.class);
 
 	public CheckMessagesDB() {
 		try {
 			con = DatabaseConnection.getInstance().getConnection();
-			System.out.println("CheckMessagesDB");
+
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("No se pudo obtener conexión ");
 		}
 	}
 
@@ -37,7 +39,9 @@ public class CheckMessagesDB {
 					ResultSet.HOLD_CURSORS_OVER_COMMIT);
 
 			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
-			
+
+			log.info("Ejecutando " + QueryEnum.VERIFY_MESSAGES.query);
+
 			System.out.println("Verify_Messages");
 
 			while (rs.next()) {
@@ -51,6 +55,7 @@ public class CheckMessagesDB {
 			}
 
 		} catch (SQLException e) {
+			log.error("No se pudo ejecutar query: " + QueryEnum.VERIFY_MESSAGES.query);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

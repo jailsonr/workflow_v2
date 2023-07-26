@@ -1,16 +1,12 @@
 package cl.security.database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.sql.PooledConnection;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-import com.microsoft.sqlserver.jdbc.SQLServerPooledConnection;
 import com.microsoft.sqlserver.jdbc.SQLServerXADataSource;
 
 import cl.security.utils.Constants;
@@ -18,6 +14,7 @@ import cl.security.utils.Constants;
 public class DatabaseConnection {
 
 	private static DatabaseConnection instance;
+	Logger log = Logger.getLogger(DatabaseConnection.class);
 	
 	SQLServerXADataSource XADataSource1 = new SQLServerXADataSource();
 
@@ -43,13 +40,17 @@ public class DatabaseConnection {
 		//Logger log = Logger.getLogger(DatabaseConnection.class);
 		
 		try {
+			log.info("Conectándose a la BD");
 //			this.connection = DriverManager.getConnection(url, username, password);
 			this.connection = pc.getConnection();
 			System.out.println("Database Connection Creation Success ");
+			log.info("Database Connection Creation Success");
 			//log.info("Database Connection Creation Success ");
 			
 		} catch (Exception ex) {
+			log.error("Database Connection Creation Failed : " + ex.getMessage());
 			System.out.println("Database Connection Creation Failed : " + ex.getMessage());
+			
 			//log.error("Database Connection Creation Failed : " + ex.getMessage());
 		}
 	}

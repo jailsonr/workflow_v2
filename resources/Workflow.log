@@ -1,0 +1,10 @@
+26 Jul 2023 14:44:21 INFO  [cl.security.log.Log.info]: Iniciando nueva ejecución
+26 Jul 2023 14:44:36 ERROR [cl.security.log.Log.error]: No se pudo obtener conexión en 
+26 Jul 2023 14:45:32 INFO  [cl.security.mdd.Main.main]: TEEEEEST
+26 Jul 2023 14:45:47 ERROR [cl.security.log.Log.error]: No se pudo obtener conexión en 
+26 Jul 2023 14:48:39 INFO  [cl.security.log.Log.info]: Iniciando nueva ejecución
+26 Jul 2023 14:52:15 INFO  [cl.security.log.Log.info]: Iniciando nueva ejecución
+26 Jul 2023 14:53:04 INFO  [cl.security.log.Log.info]: Iniciando nueva ejecución
+26 Jul 2023 14:55:16 INFO  [cl.security.log.Log.info]: Iniciando nueva ejecución
+26 Jul 2023 14:59:56 INFO  [cl.security.mdd.Main.main]: Iniciando nueva ejecución
+26 Jul 2023 15:00:11 ERROR [cl.security.observer.listeners.CheckMessagesDB.<init>]: No se pudo obtener conexión 

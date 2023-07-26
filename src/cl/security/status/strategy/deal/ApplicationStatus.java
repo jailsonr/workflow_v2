@@ -53,10 +53,20 @@ public class ApplicationStatus implements Runnable {
 			} catch (SQLException e1) {
 			}
 
-			Thread dealSetThread = new Thread(dealSetProcess());
-//			Thread removeDealsThread = new Thread(removeDealFromSet(dealSetThread));
+			DealDao.dealSet.forEach(deal -> {
 
-			dealSetThread.start();
+				System.out.println("Runnable dealSetProcess");
+
+				myThread mThread = new myThread(strategy, deal, retryLogic, numToWord);
+
+				new Thread(mThread).start();
+
+			});
+
+//			Thread dealSetThread = new Thread(dealSetProcess());
+////			Thread removeDealsThread = new Thread(removeDealFromSet(dealSetThread));
+//
+//			dealSetThread.start();
 			System.out.println("ACA");
 //			removeDealsThread.start();
 
@@ -82,7 +92,7 @@ public class ApplicationStatus implements Runnable {
 		return () -> {
 
 			DealDao.dealSet.forEach(deal -> {
-				
+
 				System.out.println("Runnable dealSetProcess");
 
 				myThread mThread = new myThread(strategy, deal, retryLogic, numToWord);
@@ -119,11 +129,9 @@ class myThread implements Runnable {
 	private Map<Integer, String> numToWord;
 
 	private void removeDealsFromSet(Set<Deal> processedDealSet) {
-		
+
 		DealDao.dealSet.removeAll(processedDealSet);
-		processedDealSet.forEach(e -> 
-			System.out.println("Se eliminó deal: " + e.getDealId())
-		);
+		processedDealSet.forEach(e -> System.out.println("Se eliminó deal: " + e.getDealId()));
 	}
 
 	public myThread(StatusStrategy strategy, Deal deal, RetryLogic retryLogic, Map<Integer, String> numToWord) {
@@ -136,7 +144,7 @@ class myThread implements Runnable {
 
 	@Override
 	public void run() {
-		
+
 		Set<Deal> processedDealSet = new HashSet<>();
 
 		strategy = CheckJob.status.get(Constants.MLS);
@@ -200,7 +208,7 @@ class myThread implements Runnable {
 			System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
 			// Despues de los 6 intentos se elimina objeto de la lista
 			processedDealSet.add(deal);
-			
+
 			strategy = CheckJob.status.get(Constants.KONDOR);
 			strategy.updateStatusDealList(deal);
 
@@ -215,6 +223,8 @@ class myThread implements Runnable {
 				removeDealsFromSet(processedDealSet);
 			});
 		}
+		
+		
 
 //		System.out.println("SÍ SE TERMINÓ");
 
