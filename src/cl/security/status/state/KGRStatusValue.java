@@ -29,30 +29,21 @@ public class KGRStatusValue {
 	}
 
 	public boolean queryUpdateRepairKGR(int dealId, int kdbTableId, String repKGR, String repMLS, String envBO) {
-		
-		CallableStatement cs = null;
-		
-		//PropertyConfigurator.configure(Constants.LOG4J);
-		//Logger log = Logger.getLogger(KGRStatusValue.class);
-		
+
+		// PropertyConfigurator.configure(Constants.LOG4J);
+		// Logger log = Logger.getLogger(KGRStatusValue.class);
+
 		final String spCall = "{call Kustom.." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
 
-		try {
-			cs = DatabaseConnection.getInstance().getConnection().prepareCall(spCall);
-		} catch (SQLException e) {
-		}
-		try {
+		try (CallableStatement cs = DatabaseConnection.getConnection().prepareCall(spCall);) {
 			cs.setString(1, "U");
 			cs.setInt(2, kdbTableId);
 			cs.setInt(3, dealId);
 			cs.setString(4, repKGR);
 			cs.setString(5, repMLS);
 			cs.setString(6, envBO);
-		} catch (SQLException e) {
-		}
-		try {
-			System.out.println("Ejecutando " +  PropertiesUtil.FLAGS + " DealId: " + dealId);
-			//log.info("Ejecutando " +  PropertiesUtil.FLAGS + " DealId: " + dealId);
+
+			System.out.println("Ejecutando " + PropertiesUtil.FLAGS + " DealId: " + dealId);
 			cs.execute();
 		} catch (SQLException e) {
 		}
@@ -61,24 +52,16 @@ public class KGRStatusValue {
 	}
 
 	public boolean queryUpdateWKFDealsList(int dealId, int kdbTableId, int transactionId) {
-		Statement stmt = null;
-		
-		//PropertyConfigurator.configure(Constants.LOG4J);
-		//Logger log = Logger.getLogger(KGRStatusValue.class);
+		// PropertyConfigurator.configure(Constants.LOG4J);
+		// Logger log = Logger.getLogger(KGRStatusValue.class);
 
 		String queryUpdateRepair = "UPDATE " + PropertiesUtil.DEALTABLA + " SET Status = 'T' WHERE DealId = " + dealId
 				+ " AND KdbTableId = " + kdbTableId + " AND TransactionId = " + transactionId;
 
-		try {
-			stmt = DatabaseConnection.getInstance().getConnection().createStatement();
+		try (Statement stmt = DatabaseConnection.getConnection().createStatement();) {
 
-		} catch (SQLException e) {
-		}
-		try {
-			System.out.println("Ejecutando " +  PropertiesUtil.DEALTABLA + " DealId: " + dealId);
-			//log.info("Ejecutando " +  PropertiesUtil.DEALTABLA + " DealId: " + dealId);
+			System.out.println("Ejecutando " + PropertiesUtil.DEALTABLA + " DealId: " + dealId);
 			stmt.executeUpdate(queryUpdateRepair);
-
 		} catch (SQLException e) {
 		}
 		return true;
@@ -86,32 +69,23 @@ public class KGRStatusValue {
 	}
 
 	public void overDraftLogger(String application, int transactionId, String action, int kdbTablesId, int dealsId) {
-		
-		//PropertyConfigurator.configure(Constants.LOG4J);
-		//Logger log = Logger.getLogger(KGRStatusValue.class);
-		
+
+		// PropertyConfigurator.configure(Constants.LOG4J);
+		// Logger log = Logger.getLogger(KGRStatusValue.class);
+
 		String storedProcedure = "{call " + PropertiesUtil.EDAI + "(?,?,?)}";
-		System.out.println("WKF_ExceededDeals_acceptanceInsert: " + application + " - " + kdbTablesId + " - " + dealsId);
-		//log.info("WKF_ExceededDeals_acceptanceInsert: " + application + " - " + kdbTablesId + " - " + dealsId);
+		System.out
+				.println("WKF_ExceededDeals_acceptanceInsert: " + application + " - " + kdbTablesId + " - " + dealsId);
+		// log.info("WKF_ExceededDeals_acceptanceInsert: " + application + " - " +
+		// kdbTablesId + " - " + dealsId);
 
-		CallableStatement cs = null;
-
-		try {
-			cs = DatabaseConnection.getInstance().getConnection().prepareCall(storedProcedure);
-		} catch (SQLException e) {
-		}
-
-		try {
+		try (CallableStatement cs = DatabaseConnection.getConnection().prepareCall(storedProcedure);) {
 			cs.setString(1, application);
 			cs.setInt(2, kdbTablesId);
 			cs.setInt(3, dealsId);
 
-		} catch (SQLException e) {
-		}
-
-		try {
-			System.out.println("Ejecutando " +  PropertiesUtil.EDAI + " DealId: " + dealsId);
-			//log.info("Ejecutando " +  PropertiesUtil.EDAI + " DealId: " + dealsId);
+			System.out.println("Ejecutando " + PropertiesUtil.EDAI + " DealId: " + dealsId);
+			// log.info("Ejecutando " + PropertiesUtil.EDAI + " DealId: " + dealsId);
 			cs.execute();
 		} catch (SQLException e) {
 		}

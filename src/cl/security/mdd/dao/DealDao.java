@@ -16,22 +16,20 @@ import cl.security.model.Deal;
 public final class DealDao {
 
 	public static Logger log = Logger.getLogger(DealDao.class);
-	
+
 	public static Set<Deal> dealSet = new HashSet<>();
 	public static Set<Deal> processedDealSet = new HashSet<>();
 
 	public static void loadDeals() throws SQLException {
+		Connection con = DatabaseConnection.getConnection();
 
-		try {
-			
-			Connection con = DatabaseConnection.getInstance().getConnection();
-			CallableStatement cs = con.prepareCall(QueryEnum.GET_DEAL_LIST.query);
+		try (CallableStatement cs = con.prepareCall(QueryEnum.GET_DEAL_LIST.query);) {
 
 			cs.setString(1, "P");
 			cs.setInt(2, 0);
-			
+
 			ResultSet rs = cs.executeQuery();
-			
+
 			log.info("Executed " + QueryEnum.GET_DEAL_LIST.query);
 			System.out.println("Executed " + QueryEnum.GET_DEAL_LIST.query);
 
@@ -45,8 +43,9 @@ public final class DealDao {
 				deal.setStatus(rs.getString("Status"));
 				deal.setVersion(rs.getInt("Version"));
 
-				log.info("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId") + ", TransactionId: " + rs.getInt("TransactionId"));
-				
+				log.info("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
+						+ ", TransactionId: " + rs.getInt("TransactionId"));
+
 				dealSet.add(deal);
 
 			}

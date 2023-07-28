@@ -26,7 +26,7 @@ public class CheckMessagesDB {
 
 		try {
 
-			con = DatabaseConnection.getInstance().getConnection();
+			con = DatabaseConnection.getConnection();
 			log.info("Conexion establecida");
 
 		} catch (SQLException e) {
@@ -39,10 +39,10 @@ public class CheckMessagesDB {
 
 	public void buildParams() {
 
-		try {
+		try (Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY,
+				ResultSet.HOLD_CURSORS_OVER_COMMIT)){
 
-			stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY,
-					ResultSet.HOLD_CURSORS_OVER_COMMIT);
+			
 			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
 
 			log.info("Executed " + QueryEnum.VERIFY_MESSAGES.query);

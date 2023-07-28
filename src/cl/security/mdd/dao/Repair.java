@@ -22,7 +22,7 @@ public abstract class Repair {
 
 	protected Connection getConn() {
 		try {
-			return DatabaseConnection.getInstance().getConnection();
+			return DatabaseConnection.getConnection();
 		} catch (SQLException e) {
 		}
 		return null;
@@ -35,31 +35,25 @@ public abstract class Repair {
 	public abstract Repair queryUpdateRepair(int dealId, int kdbTablesId, String repKGR, String repMLS, String envBO);
 
 	public void deleteMessage(Params p) {
-		//PropertyConfigurator.configure(Constants.LOG4J);
-		//Logger log = Logger.getLogger(Repair.class);
+		// PropertyConfigurator.configure(Constants.LOG4J);
+		// Logger log = Logger.getLogger(Repair.class);
 		System.out.println("Eliminando mensaje de la tabla");
-		//log.info("Eliminando mensaje de la tabla");
+		// log.info("Eliminando mensaje de la tabla");
 		DeleteMessage.deleteMessage(p);
 	}
-	
+
 	public boolean queryUpdateWKFDealsList(int dealId, int kdbTableId, int transactionId) {
-		Statement stmt = null;
 
 		String queryUpdateRepair = "UPDATE " + PropertiesUtil.DEAL + " SET Status = 'T' WHERE DealId = " + dealId
 				+ " AND KdbTableId = " + kdbTableId + " AND TransactionId = " + transactionId;
-		
-		//PropertyConfigurator.configure(Constants.LOG4J);
-		//Logger log = Logger.getLogger(Repair.class);
 
-		try {
-			stmt = DatabaseConnection.getInstance().getConnection().createStatement();
+		// PropertyConfigurator.configure(Constants.LOG4J);
+		// Logger log = Logger.getLogger(Repair.class);
 
-		} catch (SQLException e) {
-		}
-		try {
-			System.out.println("Ejecutando " +  PropertiesUtil.DEAL + " DealId: " + dealId);
-			//log.info("Ejecutando " +  PropertiesUtil.DEAL + " DealId: " + dealId);
+		try (Statement stmt = DatabaseConnection.getConnection().createStatement();) {
 			stmt.executeUpdate(queryUpdateRepair);
+			System.out.println("Ejecutando " + PropertiesUtil.DEAL + " DealId: " + dealId);
+			// log.info("Ejecutando " + PropertiesUtil.DEAL + " DealId: " + dealId);
 
 		} catch (SQLException e) {
 		}

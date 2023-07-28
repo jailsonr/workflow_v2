@@ -54,6 +54,12 @@ public final class Constants {
 	public static final String PROGRAM_NAME = load.getProperties(CONFIGURACION, log).get("ProgramName").toString().trim();
 	
 	public static final int INTERVAL_TIME = 5;
+
+	public static final String MAXIMUM_POOL_SIZE = load.getProperties(CONFIGURACION, log).get("MaximumPoolSize").toString().trim();
+	
+	public static final String CONNECTION_TIMEOUT = load.getProperties(CONFIGURACION, log).get("ConnectionTimeout").toString().trim();
+	
+	public static final String IDLE_TIMEOUT = load.getProperties(CONFIGURACION, log).get("IdleTimeout").toString().trim();
 	
 	
 	

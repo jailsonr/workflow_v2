@@ -45,12 +45,10 @@ public class KisFileDAO {
 
 		final String storeProcedure = QueryEnum.IMPORT_FILE.query;
 
-		CallableStatement cs = null;
 		ResultSet rs = null;
 
-		try {
+		try (CallableStatement cs = DatabaseConnection.getConnection().prepareCall(storeProcedure);) {
 
-			cs = DatabaseConnection.getInstance().getConnection().prepareCall(storeProcedure);
 			cs.setInt(1, kdbTableId);
 			cs.setInt(2, dealId);
 			cs.setString(3, KGRRequest);
@@ -100,14 +98,6 @@ public class KisFileDAO {
 			this.fileName = this.createKISFile(this.mapas, dealId);
 
 		} catch (IOException e4) {
-
-		}
-
-		try {
-
-			cs.close();
-
-		} catch (SQLException e3) {
 
 		}
 
@@ -211,10 +201,8 @@ public class KisFileDAO {
 		// final String storeProcedure = "{call " + PropertiesUtil.GETKISDEAL +
 		// "(?,?,?)}";
 		final String storeProcedure = QueryEnum.GET_KIS_DEAL_ID.query;
-		CallableStatement cs = null;
 		int dealsIdOut = 0;
-		try {
-			cs = DatabaseConnection.getInstance().getConnection().prepareCall(storeProcedure);
+		try (CallableStatement cs = DatabaseConnection.getConnection().prepareCall(storeProcedure);) {
 			cs.setInt(1, kdbTableId);
 			cs.setInt(2, dealId);
 			cs.registerOutParameter(3, 4);

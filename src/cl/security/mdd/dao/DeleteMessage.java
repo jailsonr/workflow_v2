@@ -15,15 +15,16 @@ public class DeleteMessage {
 	static Logger log = Logger.getLogger(DeleteMessage.class);
 
 	public static void deleteMessage(Params p) {
-
+		Connection con = null;
 		try {
+			con = DatabaseConnection.getConnection();
+		} catch (SQLException e1) {
+			log.error("No se pudo obtener conexion");
+		}
 
-			Connection con = DatabaseConnection.getInstance().getConnection();
-			CallableStatement cs = null;
+		String query = QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query;
 
-			String query = QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query;
-
-			cs = con.prepareCall(query);
+		try (CallableStatement cs = con.prepareCall(query);) {
 
 			cs.setInt(1, p.getKdbTablesId());
 			cs.setInt(2, p.getDealsId());
