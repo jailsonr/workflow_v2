@@ -26,7 +26,7 @@ public class CheckMessagesDB {
 
 		try {
 
-			con = DatabaseConnection.getConnection();
+			con = DatabaseConnection.getInstance().getConnection();
 			log.info("Conexion establecida");
 
 		} catch (SQLException e) {

@@ -22,7 +22,7 @@ public abstract class Repair {
 
 	protected Connection getConn() {
 		try {
-			return DatabaseConnection.getConnection();
+			return DatabaseConnection.getInstance().getConnection();
 		} catch (SQLException e) {
 		}
 		return null;
@@ -50,7 +50,7 @@ public abstract class Repair {
 		// PropertyConfigurator.configure(Constants.LOG4J);
 		// Logger log = Logger.getLogger(Repair.class);
 
-		try (Statement stmt = DatabaseConnection.getConnection().createStatement();) {
+		try (Statement stmt = DatabaseConnection.getInstance().getConnection().createStatement();) {
 			stmt.executeUpdate(queryUpdateRepair);
 			System.out.println("Ejecutando " + PropertiesUtil.DEAL + " DealId: " + dealId);
 			// log.info("Ejecutando " + PropertiesUtil.DEAL + " DealId: " + dealId);

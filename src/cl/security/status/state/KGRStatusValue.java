@@ -35,7 +35,7 @@ public class KGRStatusValue {
 
 		final String spCall = "{call Kustom.." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
 
-		try (CallableStatement cs = DatabaseConnection.getConnection().prepareCall(spCall);) {
+		try (CallableStatement cs = DatabaseConnection.getInstance().getConnection().prepareCall(spCall);) {
 			cs.setString(1, "U");
 			cs.setInt(2, kdbTableId);
 			cs.setInt(3, dealId);
@@ -58,7 +58,7 @@ public class KGRStatusValue {
 		String queryUpdateRepair = "UPDATE " + PropertiesUtil.DEALTABLA + " SET Status = 'T' WHERE DealId = " + dealId
 				+ " AND KdbTableId = " + kdbTableId + " AND TransactionId = " + transactionId;
 
-		try (Statement stmt = DatabaseConnection.getConnection().createStatement();) {
+		try (Statement stmt = DatabaseConnection.getInstance().getConnection().createStatement();) {
 
 			System.out.println("Ejecutando " + PropertiesUtil.DEALTABLA + " DealId: " + dealId);
 			stmt.executeUpdate(queryUpdateRepair);
@@ -79,7 +79,7 @@ public class KGRStatusValue {
 		// log.info("WKF_ExceededDeals_acceptanceInsert: " + application + " - " +
 		// kdbTablesId + " - " + dealsId);
 
-		try (CallableStatement cs = DatabaseConnection.getConnection().prepareCall(storedProcedure);) {
+		try (CallableStatement cs = DatabaseConnection.getInstance().getConnection().prepareCall(storedProcedure);) {
 			cs.setString(1, application);
 			cs.setInt(2, kdbTablesId);
 			cs.setInt(3, dealsId);

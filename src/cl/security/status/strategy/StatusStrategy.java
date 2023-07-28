@@ -17,7 +17,7 @@ public interface StatusStrategy {
 
 		try {
 
-			return DatabaseConnection.getConnection();
+			return DatabaseConnection.getInstance().getConnection();
 
 		} catch (SQLException e) {
 

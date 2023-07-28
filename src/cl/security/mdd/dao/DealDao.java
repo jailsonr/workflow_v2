@@ -21,7 +21,7 @@ public final class DealDao {
 	public static Set<Deal> processedDealSet = new HashSet<>();
 
 	public static void loadDeals() throws SQLException {
-		Connection con = DatabaseConnection.getConnection();
+		Connection con = DatabaseConnection.getInstance().getConnection();
 
 		try (CallableStatement cs = con.prepareCall(QueryEnum.GET_DEAL_LIST.query);) {
 

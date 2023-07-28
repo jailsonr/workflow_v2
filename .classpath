@@ -40,6 +40,6 @@
 			<attribute name="m2e-apt" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="resources/HikariCP-5.0.1.jar"/>
+	<classpathentry kind="lib" path="resources/HikariCP-4.0.3.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

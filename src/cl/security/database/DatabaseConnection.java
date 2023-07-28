@@ -54,37 +54,21 @@ public class DatabaseConnection {
 	}
 
 	public Connection getConnection() {
-		
-		if (instance == null) {
-			try {
-				instance = new DatabaseConnection();
-			} catch (SQLException e) {
-				log.error("Database Connection Close Failed : " + e.getMessage());
-			}
-		} else
-			try {
-				if (instance.getConnection().isClosed()) {
-					instance = new DatabaseConnection();
-				}
-			} catch (SQLException e) {
-				log.error("Database Connection Close Failed : " + e.getMessage());
-			}
-		
 		return connection;
 	}
-//
-//	public static DatabaseConnection getInstance() throws SQLException {
-//		if (instance == null) {
-//			instance = new DatabaseConnection();
-//		} else if (instance.getConnection().isClosed()) {
-//			instance = new DatabaseConnection();
-//		}
-//		return instance;
-//	}
+
+	public static DatabaseConnection getInstance() throws SQLException {
+		if (instance == null) {
+			instance = new DatabaseConnection();
+		} else if (instance.getConnection().isClosed()) {
+			instance = new DatabaseConnection();
+		}
+		return instance;
+	}
 
 	public static void main(String[] args) {
 		try {
-			new DatabaseConnection().getConnection();
+			new DatabaseConnection().getInstance().getConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

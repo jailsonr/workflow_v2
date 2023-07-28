@@ -17,7 +17,7 @@ public class DeleteMessage {
 	public static void deleteMessage(Params p) {
 		Connection con = null;
 		try {
-			con = DatabaseConnection.getConnection();
+			con = DatabaseConnection.getInstance().getConnection();
 		} catch (SQLException e1) {
 			log.error("No se pudo obtener conexion");
 		}

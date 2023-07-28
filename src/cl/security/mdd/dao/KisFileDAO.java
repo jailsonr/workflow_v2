@@ -47,7 +47,7 @@ public class KisFileDAO {
 
 		ResultSet rs = null;
 
-		try (CallableStatement cs = DatabaseConnection.getConnection().prepareCall(storeProcedure);) {
+		try (CallableStatement cs = DatabaseConnection.getInstance().getConnection().prepareCall(storeProcedure);) {
 
 			cs.setInt(1, kdbTableId);
 			cs.setInt(2, dealId);
@@ -202,7 +202,7 @@ public class KisFileDAO {
 		// "(?,?,?)}";
 		final String storeProcedure = QueryEnum.GET_KIS_DEAL_ID.query;
 		int dealsIdOut = 0;
-		try (CallableStatement cs = DatabaseConnection.getConnection().prepareCall(storeProcedure);) {
+		try (CallableStatement cs = DatabaseConnection.getInstance().getConnection().prepareCall(storeProcedure);) {
 			cs.setInt(1, kdbTableId);
 			cs.setInt(2, dealId);
 			cs.registerOutParameter(3, 4);
