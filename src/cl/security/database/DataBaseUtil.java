@@ -3,7 +3,6 @@ package cl.security.database;
 import static java.lang.String.format;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -13,13 +12,10 @@ public class DataBaseUtil {
 	
 	private String CREATE_TABLE_STMT = "CREATE TABLE %s (";
 	private String VARCHAR = " varchar(255)";
-	private String COMMA = " ,";
-	
+	private String COMMA = " ,";	
 	private String INSERT_INTO = "insert into %s values (";
-	
 	private String DROP_TABLE = "IF EXISTS(select * from sysobjects where name='%s') drop table %s";
 
-	
 	Connection con;
 	Statement stmt;
 	
@@ -27,7 +23,6 @@ public class DataBaseUtil {
 		try {
 			con = DatabaseConnection.getInstance().getConnection();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -110,7 +105,6 @@ public class DataBaseUtil {
 				try {
 					stmt.addBatch(s);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			});
@@ -129,28 +123,6 @@ public class DataBaseUtil {
 		
 		
 		DataBaseUtil util = new DataBaseUtil();
-		
-//		util.dropTableIfExists();
-//		
-//		util.createTable();
-		
-//
-//		String driver = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
-//		String url;
-//		url = "jdbc:sqlserver://localhost:1433;DatabaseName=tempdb;encrypt=true;trustServerCertificate=true";
-//
-//		Connection con;
-//		Statement stmt;
-//		try {
-//			con = DriverManager.getConnection(url, "sa", "lbt-m14.2");
-//			stmt = con.createStatement();
-//			String query = "insert into Persons(PersonId, FirstName, Address, City) values(1, 'Jailson', 'Manzanares 11', 'Madrid')";
-//			stmt.execute(query);
-//			con.close();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		} finally {
-//		}
 
 	}
 

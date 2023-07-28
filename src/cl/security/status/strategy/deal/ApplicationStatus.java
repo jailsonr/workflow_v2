@@ -31,6 +31,7 @@ public class ApplicationStatus implements Runnable {
 	RetryLogic retryLogic;
 
 	public ApplicationStatus process(StatusStrategy strategy, Params p) {
+		
 		this.strategy = strategy;
 		this.p = p;
 
@@ -47,30 +48,28 @@ public class ApplicationStatus implements Runnable {
 	public void run() {
 
 		if (strategy instanceof KondorStatus) {
+			
 			System.out.println("KONDOR");
 			try {
+				
 				DealDao.loadDeals();
+				
 			} catch (SQLException e1) {
+				
+				
+				
 			}
 
 			DealDao.dealSet.forEach(deal -> {
 
 				System.out.println("Runnable dealSetProcess");
-
 				myThread mThread = new myThread(strategy, deal, retryLogic, numToWord);
-
 				new Thread(mThread).start();
 
 			});
 
-//			Thread dealSetThread = new Thread(dealSetProcess());
-////			Thread removeDealsThread = new Thread(removeDealFromSet(dealSetThread));
-//
-//			dealSetThread.start();
-			System.out.println("ACA");
-//			removeDealsThread.start();
-
 		} else {
+			
 			System.out.println("KGR o MLS");
 			// Reparo puede ser N o R
 			String reparo = strategy.statusFromCustomWindow(p);
@@ -101,23 +100,8 @@ public class ApplicationStatus implements Runnable {
 
 			});
 
-//			System.out.println("Borrados");
-//			processedDealSet.forEach(System.out::println);
-
 		};
 	}
-
-//	private Runnable removeDealFromSet(Thread t) {
-//		return () -> {
-//			while (true) {
-//				if (!t.isAlive()) {
-//					DealDao.processedDealSet.forEach(d -> {
-//						DealDao.dealSet.remove(d);
-//					});
-//				}
-//			}
-//		};
-//	}
 
 }
 
@@ -132,14 +116,17 @@ class myThread implements Runnable {
 
 		DealDao.dealSet.removeAll(processedDealSet);
 		processedDealSet.forEach(e -> System.out.println("Se eliminó deal: " + e.getDealId()));
+		
 	}
 
 	public myThread(StatusStrategy strategy, Deal deal, RetryLogic retryLogic, Map<Integer, String> numToWord) {
+		
 		super();
 		this.strategy = strategy;
 		this.deal = deal;
 		this.retryLogic = retryLogic;
 		this.numToWord = numToWord;
+		
 	}
 
 	@Override
@@ -217,17 +204,17 @@ class myThread implements Runnable {
 		retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, 1);
 
 		try {
+			
 			removeDealsFromSet(processedDealSet);
+			
 		} catch (Exception e) {
+			
 			retryLogic.retryImpl(() -> {
 				removeDealsFromSet(processedDealSet);
 			});
+			
 		}
 		
-		
-
-//		System.out.println("SÍ SE TERMINÓ");
-
 	}
 
 }

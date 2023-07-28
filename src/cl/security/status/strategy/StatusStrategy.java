@@ -14,11 +14,18 @@ import cl.security.model.Params;
 public interface StatusStrategy {
 
 	default Connection getConn() {
+		
 		try {
+			
 			return DatabaseConnection.getInstance().getConnection();
+			
 		} catch (SQLException e) {
+			
+			
 		}
+		
 		return null;
+		
 	}
 
 	default String statusFromCustomWindow(Params p) {
@@ -26,16 +33,21 @@ public interface StatusStrategy {
 		CallableStatement cs = null;
 		ResultSet rs = null;
 
-		//String storeProcedure = "{call Kustom.dbo." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
 		String storeProcedure = QueryEnum.FLAGS_DEALS.query;
 
 		try {
+			
 			cs = getConn().prepareCall(storeProcedure);
+			
 		} catch (SQLException e) {
+			
 			e.printStackTrace();
 			System.out.println("cs " + e.getMessage());
+			
 		}
+		
 		try {
+			
 			cs.setString(1, "S");
 			cs.setInt(2, p.getKdbTablesId());
 			cs.setInt(3, p.getDealsId());
@@ -44,31 +56,48 @@ public interface StatusStrategy {
 			cs.setString(6, null);
 
 		} catch (SQLException e) {
+			
 			e.printStackTrace();
 			System.out.println("cs SETS " + e.getMessage());
+			
 		}
 
 		try {
+			
 			rs = cs.executeQuery();
+			
 		} catch (SQLException e) {
+			
 			e.printStackTrace();
 			System.out.println("e.printStackTrace();" + e.getMessage());
+			
 		}
 
 		try {
+			
 			if (rs.next()) {
+				
 				if (rs.getObject("RepMLS") != null) {
+					
 					System.out.println("RepMLS");
 					return rs.getString("RepMLS");
+					
 				} else if (rs.getObject("RepKGR") != null) {
+					
 					System.out.println("RepKGR");
 					return rs.getString("RepKGR");
+					
 				}
+				
 				return "";
+				
 			}
+			
 		} catch (SQLException e) {
+			
 			e.printStackTrace();
 			System.out.println("rs" + e.getMessage());
+			
 		}
 
 		return "";
@@ -83,10 +112,10 @@ public interface StatusStrategy {
 
 		CallableStatement cs = null;
 		int status = 0;
-		//String storeProcedure = "{call Kustom.." + PropertiesUtil.MLSRESULT + "(?,?,?,?)}";
 		String storeProcedure = QueryEnum.MLS_DEAL_RESULT_GET.query;
 
 		try {
+			
 			cs = getConn().prepareCall(storeProcedure);
 			cs.setInt(1, deal.getKdbTableId());
 			cs.setInt(2, deal.getTransactionId());
@@ -94,7 +123,11 @@ public interface StatusStrategy {
 			cs.registerOutParameter(4, Types.INTEGER);
 			cs.execute();
 			status = cs.getInt(4);
+			
 		} catch (SQLException e) {
+			
+			
+			
 		}
 
 		return status != 0;

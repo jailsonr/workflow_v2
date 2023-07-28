@@ -23,12 +23,18 @@ public class CheckMessagesDB {
 	Logger log = Logger.getLogger(CheckMessagesDB.class);
 
 	public CheckMessagesDB() {
+
 		try {
+
 			con = DatabaseConnection.getInstance().getConnection();
+			log.info("Conexion establecida");
 
 		} catch (SQLException e) {
-			log.error("No se pudo obtener conexión ");
+
+			log.error("No se pudo obtener conexion. Error: " + e.getMessage());
+
 		}
+
 	}
 
 	public void buildParams() {
@@ -37,37 +43,38 @@ public class CheckMessagesDB {
 
 			stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY,
 					ResultSet.HOLD_CURSORS_OVER_COMMIT);
-
 			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
 
-			log.info("Ejecutando " + QueryEnum.VERIFY_MESSAGES.query);
-
-			System.out.println("Verify_Messages");
+			log.info("Executed " + QueryEnum.VERIFY_MESSAGES.query);
+			System.out.println("Executed " + QueryEnum.VERIFY_MESSAGES.query);
 
 			while (rs.next()) {
 
 				String arr[] = rs.getString(3).split("\\s+");
-
 				params = new Params(arr[0], Integer.parseInt(arr[1].trim()), Integer.parseInt(arr[2].trim()));
-
 				paramSet.add(params);
 
 			}
 
 		} catch (SQLException e) {
-			log.error("No se pudo ejecutar query: " + QueryEnum.VERIFY_MESSAGES.query);
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+			log.error("Not executed " + QueryEnum.VERIFY_MESSAGES.query + ".Error: " + e.getMessage());
+
 		}
 
 	}
 
 	public Set<Params> getParamSet() {
+
 		return paramSet;
+
 	}
 
 	public ResultSet getRs() {
+
 		return rs;
+
 	}
 
 }

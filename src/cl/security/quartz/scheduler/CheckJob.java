@@ -1,13 +1,20 @@
 package cl.security.quartz.scheduler;
 
 import static cl.security.utils.LoaderUtil.getInstatiatedStatusClasses;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import cl.security.observer.listeners.CheckMessagesDB;
 import cl.security.status.strategy.StatusStrategy;
 import cl.security.status.strategy.deal.ApplicationStatus;
 
+
 public class CheckJob implements Runnable {
+	
+	Logger log = Logger.getLogger(CheckJob.class);
 
 	public static Map<String, StatusStrategy> status = new HashMap<String, StatusStrategy>();
 
@@ -18,34 +25,28 @@ public class CheckJob implements Runnable {
 		checkMessages.buildParams();
 
 		checkMessages.getParamSet().forEach(param -> {
-			// Se llena el hashmap con las clases estrategias que estan en el package
-			// cl.security.status.strategy.status
-			// No se deben crear clases que no sean estrategia dentro de ese package ni
-			// tampoco packages dentro de ese package
-
+			
 			StatusStrategy strategy;
+			
 			try {
+				
 				status = getInstatiatedStatusClasses();
-				System.out.println("StatusStrategy");
+				log.info("Obtencion de clases de estados");
+				
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
+				log.error("Error obtencion de clases de estados" + e.getMessage());
+				
 			}
 
-			// El DealStatus sería un hilo donde se setea la estrategia que puede ser MLS o
-			// KGR
 			ApplicationStatus appStatus = new ApplicationStatus();
-
 			String dataBaseName = param.getDataBaseName();
-			
-			System.out.println("appStatus");
-
-			// Definiendo estrategia para el objeto que calza con el nombre que viene de la
-			// base de datos
 			strategy = status.get(dataBaseName.toLowerCase());
-			System.out.println("strategy 1 " + strategy);
-			System.out.println("strategy 2 " + strategy.toString());
+			log.info("Definiendo estrategia " + strategy.toString());
+			
 			new Thread(appStatus.process(strategy, param)).start();
+			
 		});
 
 	}

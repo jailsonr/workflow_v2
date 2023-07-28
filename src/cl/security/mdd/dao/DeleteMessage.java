@@ -5,50 +5,45 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
 import cl.security.model.Params;
-import cl.security.utils.Constants;
 
 public class DeleteMessage {
 
+	static Logger log = Logger.getLogger(DeleteMessage.class);
 
 	public static void deleteMessage(Params p) {
-		try {
-			Connection con = DatabaseConnection.getInstance().getConnection();
 
+		try {
+
+			Connection con = DatabaseConnection.getInstance().getConnection();
 			CallableStatement cs = null;
 
 			String query = QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query;
-			
-			//PropertyConfigurator.configure(Constants.LOG4J);
-			//Logger log = Logger.getLogger(DeleteMessage.class);
 
-			try {
+			cs = con.prepareCall(query);
 
-				cs = con.prepareCall(query);
+			cs.setInt(1, p.getKdbTablesId());
+			cs.setInt(2, p.getDealsId());
+			cs.setString(3, p.getDataBaseName().toUpperCase());
 
-				cs.setInt(1, p.getKdbTablesId());
-				cs.setInt(2, p.getDealsId());
-				cs.setString(3, p.getDataBaseName().toUpperCase());
+			log.info("Executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query);
+			System.out.println("Executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query);
 
-				System.out.println("Ejecutando DELETE_MESSAGE");
-				//log.info("Ejecutando DELETE_MESSAGE");
-				cs.executeUpdate();
-
-			} catch (SQLException e) {
-				System.out.println("error 2: " + e);
-				//log.error("error 2: " + e);
-			} finally {
-				System.out.println("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
-				//log.info("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
-			}
+			cs.executeUpdate();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+			log.error("Not executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + ".Error: " + e.getMessage());
+
+		} finally {
+
+			System.out.println("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
+			log.info("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
+
 		}
 
 	}

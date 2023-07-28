@@ -15,12 +15,17 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
 import cl.security.model.KISFile;
 import cl.security.utils.Constants;
 
 public class KisFileDAO {
+
+	Logger log = Logger.getLogger(KisFileDAO.class);
+
 	public static final String DATE_FORMAT = "dd-MM-yyyy_HH:mm:ss.SSSSSS";
 	private String fileName;
 	private String routeKisFile;
@@ -38,26 +43,39 @@ public class KisFileDAO {
 		final PrintWriter salida = null;
 		KGRRequest = null;
 
-		//final String storeProcedure = "{call Kustom.." + PropertiesUtil.KISFIELDS + "(?,?,?)}";
 		final String storeProcedure = QueryEnum.IMPORT_FILE.query;
-		
+
 		CallableStatement cs = null;
 		ResultSet rs = null;
 
 		try {
+
 			cs = DatabaseConnection.getInstance().getConnection().prepareCall(storeProcedure);
 			cs.setInt(1, kdbTableId);
 			cs.setInt(2, dealId);
 			cs.setString(3, KGRRequest);
 
+			log.info("Executed " + QueryEnum.IMPORT_FILE.query);
+			System.out.println("Executed " + QueryEnum.IMPORT_FILE.query);
+
 			rs = cs.executeQuery();
+
 		} catch (SQLException e2) {
+
+			e2.printStackTrace();
+			log.error("Not executed " + QueryEnum.IMPORT_FILE.query + ".Error: " + e2.getMessage());
+
 		}
+
 		int i = 0;
 		this.mapas = new HashMap<Integer, KISFile>();
+
 		if (rs != null) {
+
 			try {
+
 				while (rs.next()) {
+
 					this.paramId = rs.getInt("ParamId");
 					this.paramName = rs.getString("ParamName").trim();
 					this.paramValue = rs.getString("ParamValue").trim();
@@ -67,29 +85,47 @@ public class KisFileDAO {
 					parametros.setParamValue(this.paramValue);
 					this.mapas.put(i, parametros);
 					++i;
+
 				}
+
 			} catch (SQLException e3) {
+
 			}
 		} else {
+
 		}
+
 		try {
+
 			this.fileName = this.createKISFile(this.mapas, dealId);
+
 		} catch (IOException e4) {
+
 		}
+
 		try {
+
 			cs.close();
+
 		} catch (SQLException e3) {
+
 		}
+
 		return this.fileName;
+
 	}
 
 	public String createKISFile(HashMap<Integer, KISFile> mapa, int dealId) throws IOException {
+
 		String template = null;
 		String dealId2 = null;
+
 		System.out.println("Mapa: " + mapa.size());
+
 		if (mapa.size() == 3) {
 
 			for (final Map.Entry<Integer, KISFile> e : mapa.entrySet()) {
+
 				final Integer Id = e.getKey();
 				final KISFile file = e.getValue();
 				final int getParamId = file.getParamId();
@@ -99,22 +135,31 @@ public class KisFileDAO {
 				System.out.println("File: " + file);
 
 				if (getParamName.equals("NbParams")) {
+
 					final String nbParams = getParamValue;
 					System.out.println(nbParams);
-				}
 
-				else if (getParamName.equals("Template")) {
+				} else if (getParamName.equals("Template")) {
+
 					template = getParamValue;
 					System.out.println("Template: " + template);
+
 				} else {
+
 					if (!getParamName.equals("DealId")) {
+
 						System.out.println("!DealId: " + getParamName);
 						continue;
+
 					}
+
 					dealId2 = getParamValue;
 					System.out.println("DealId2: " + dealId2);
+
 				}
+
 			}
+
 		}
 
 		this.routeKisFile = Constants.ROUTEKIS;
@@ -122,7 +167,8 @@ public class KisFileDAO {
 		final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss.SSSSSS");
 		final Calendar cal = Calendar.getInstance();
 		final String Date = sdf.format(cal.getTime());
-		final String FileNameCreate = String.valueOf(this.routeKisFile) + template + "_" + dealId + "_" + Date.replace(":", "_");
+		final String FileNameCreate = String.valueOf(this.routeKisFile) + template + "_" + dealId + "_"
+				+ Date.replace(":", "_");
 		BufferedReader reader = null;
 		PrintWriter writer = null;
 		String line = null;
@@ -130,25 +176,40 @@ public class KisFileDAO {
 		System.out.println(routeKisFile);
 		System.out.println(routeTemplates);
 		final File Out = new File(FileNameCreate);
+
 		try {
+
 			reader = new BufferedReader(new FileReader(In));
 			writer = new PrintWriter(new FileWriter(Out));
+
 			while ((line = reader.readLine()) != null) {
+
 				writer.println(line.replaceAll("#DealId#", dealId2));
+
 			}
+
 		} catch (FileNotFoundException e2) {
+
 			e2.printStackTrace();
+
 		}
+
 		try {
+
 			reader.close();
+
 		} catch (IOException e3) {
+
 		}
+
 		writer.close();
 		return FileNameCreate;
+
 	}
 
 	public int getKISDealId(int kdbTableId, int dealId) {
-		//final String storeProcedure = "{call " + PropertiesUtil.GETKISDEAL + "(?,?,?)}";
+		// final String storeProcedure = "{call " + PropertiesUtil.GETKISDEAL +
+		// "(?,?,?)}";
 		final String storeProcedure = QueryEnum.GET_KIS_DEAL_ID.query;
 		CallableStatement cs = null;
 		int dealsIdOut = 0;
