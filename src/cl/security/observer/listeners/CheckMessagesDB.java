@@ -16,7 +16,6 @@ import cl.security.model.Params;
 public class CheckMessagesDB {
 
 	private Connection con;
-	private Statement stmt;
 	private ResultSet rs = null;
 	private Params params;
 	private Set<Params> paramSet = new HashSet<Params>();
@@ -40,9 +39,8 @@ public class CheckMessagesDB {
 	public void buildParams() {
 
 		try (Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY,
-				ResultSet.HOLD_CURSORS_OVER_COMMIT)){
+				ResultSet.HOLD_CURSORS_OVER_COMMIT)) {
 
-			
 			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
 
 			log.info("Executed " + QueryEnum.VERIFY_MESSAGES.query);
@@ -57,10 +55,7 @@ public class CheckMessagesDB {
 			}
 
 		} catch (SQLException e) {
-
-			e.printStackTrace();
 			log.error("Not executed " + QueryEnum.VERIFY_MESSAGES.query + ".Error: " + e.getMessage());
-
 		}
 
 	}

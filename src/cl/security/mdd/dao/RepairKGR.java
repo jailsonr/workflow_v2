@@ -6,11 +6,14 @@ import java.sql.SQLException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
 import cl.security.model.Params;
 import cl.security.utils.Constants;
 
 public class RepairKGR extends Repair {
+	
+	Logger log = Logger.getLogger(RepairKGR.class);
 
 	@Override
 	public Repair build(Params p, String reparo) {
@@ -38,7 +41,6 @@ public class RepairKGR extends Repair {
 
 	@Override
 	public Repair queryUpdateRepair(int dealId, int kdbTablesId, String repKGR, String repMLS, String envBO) {
-		CallableStatement cs = null;
 
 		//PropertyConfigurator.configure(Constants.LOG4J);
 		//Logger log = Logger.getLogger(RepairKGR.class);
@@ -46,27 +48,23 @@ public class RepairKGR extends Repair {
 		//System.out.println("Ejecutando " + PropertiesUtil.FLAGS + " DealId: " + dealId);
 		//String storeProcedure = "{call Kustom.." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
 		System.out.println("Ejecutando " + QueryEnum.FLAGS_DEALS.query + " DealId: " + dealId);
+		log.info("Ejecutando " + QueryEnum.FLAGS_DEALS.query + " DealId: " + dealId);
 		//log.info("Ejecutando " + QueryEnum.FLAGS_DEALS.query + " DealId: " + dealId);
 		String storeProcedure = QueryEnum.FLAGS_DEALS.query;
 		
-		try {
-			cs = getConn().prepareCall(storeProcedure);
-		} catch (SQLException e) {
-		}
-
-		try {
+		try (CallableStatement cs = getConn().prepareCall(storeProcedure);) {
 			cs.setString(1, "U");
 			cs.setInt(2, kdbTablesId);
 			cs.setInt(3, dealId);
 			cs.setString(4, repKGR);
 			cs.setString(5, repMLS);
 			cs.setString(6, envBO);
-		} catch (SQLException e) {
-		}
-		try {
 			cs.execute();
 		} catch (SQLException e) {
+			log.error("No se pudo ejecutar " + storeProcedure);
 		}
+
+	
 		return this;
 	
 	}

@@ -6,12 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.apache.log4j.Logger;
+
 import cl.security.database.DatabaseConnection;
 import cl.security.database.utils.QueryEnum;
 import cl.security.model.Deal;
 import cl.security.model.Params;
 
 public interface StatusStrategy {
+
+	Logger log = Logger.getLogger(StatusStrategy.class);
 
 	default Connection getConn() {
 
@@ -20,7 +24,7 @@ public interface StatusStrategy {
 			return DatabaseConnection.getInstance().getConnection();
 
 		} catch (SQLException e) {
-
+			log.error("No se pudo obtener conexion con la base de datos");
 		}
 
 		return null;
@@ -42,6 +46,9 @@ public interface StatusStrategy {
 			cs.setString(5, null);
 			cs.setString(6, null);
 
+			log.info("Ejecutando " + storeProcedure);
+			log.info("S, KDBTable: " + p.getKdbTablesId() + " Deal Id: " + p.getDealsId());
+
 			rs = cs.executeQuery();
 			if (rs.next()) {
 
@@ -61,9 +68,8 @@ public interface StatusStrategy {
 
 			}
 		} catch (SQLException e) {
-
-			e.printStackTrace();
-			System.out.println("cs " + e.getMessage());
+			log.error("No se pudo ejecutar: " + storeProcedure);
+			log.error("S, KDBTable: " + p.getKdbTablesId() + " Deal Id: " + p.getDealsId());
 
 		}
 
@@ -77,21 +83,25 @@ public interface StatusStrategy {
 
 	default boolean getStatusReady(Deal deal) {
 
-		CallableStatement cs = null;
 		int status = 0;
 		String storeProcedure = QueryEnum.MLS_DEAL_RESULT_GET.query;
 
-		try {
+		try (CallableStatement cs = getConn().prepareCall(storeProcedure);) {
 
-			cs = getConn().prepareCall(storeProcedure);
 			cs.setInt(1, deal.getKdbTableId());
 			cs.setInt(2, deal.getTransactionId());
 			cs.setDouble(3, deal.getDealId());
 			cs.registerOutParameter(4, Types.INTEGER);
+			log.info("Ejecutando " + storeProcedure);
+			log.info("KDBTable: " + deal.getKdbTableId() + " Transaction Id: " + deal.getTransactionId() + " Deal Id: "
+					+ deal.getDealId());
 			cs.execute();
 			status = cs.getInt(4);
 
 		} catch (SQLException e) {
+			log.error("No se pudo ejecutar: " + storeProcedure);
+			log.error("KDBTable: " + deal.getKdbTableId() + " Transaction Id: " + deal.getTransactionId() + " Deal Id: "
+					+ deal.getDealId());
 
 		}
 
