@@ -44,6 +44,7 @@ public class CheckMessagesDB {
 			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
 
 			log.info("Executed " + QueryEnum.VERIFY_MESSAGES.query);
+			
 			System.out.println("Executed " + QueryEnum.VERIFY_MESSAGES.query);
 
 			while (rs.next()) {

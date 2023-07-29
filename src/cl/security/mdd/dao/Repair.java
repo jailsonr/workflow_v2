@@ -16,6 +16,7 @@ public abstract class Repair {
 
 	public Params p;
 	public String reparo;
+	Logger log = Logger.getLogger(Repair.class);
 
 	Repair() {
 	}
@@ -24,6 +25,7 @@ public abstract class Repair {
 		try {
 			return DatabaseConnection.getInstance().getConnection();
 		} catch (SQLException e) {
+			log.error("No se pudo obtener conexion.");
 		}
 		return null;
 	}
@@ -38,7 +40,7 @@ public abstract class Repair {
 		// PropertyConfigurator.configure(Constants.LOG4J);
 		// Logger log = Logger.getLogger(Repair.class);
 		System.out.println("Eliminando mensaje de la tabla");
-		// log.info("Eliminando mensaje de la tabla");
+		log.info("Eliminando mensaje de la tabla para " + p.getDealsId());
 		DeleteMessage.deleteMessage(p);
 	}
 
@@ -47,15 +49,13 @@ public abstract class Repair {
 		String queryUpdateRepair = "UPDATE " + PropertiesUtil.DEAL + " SET Status = 'T' WHERE DealId = " + dealId
 				+ " AND KdbTableId = " + kdbTableId + " AND TransactionId = " + transactionId;
 
-		// PropertyConfigurator.configure(Constants.LOG4J);
-		// Logger log = Logger.getLogger(Repair.class);
-
 		try (Statement stmt = DatabaseConnection.getInstance().getConnection().createStatement();) {
 			stmt.executeUpdate(queryUpdateRepair);
-			System.out.println("Ejecutando " + PropertiesUtil.DEAL + " DealId: " + dealId);
-			// log.info("Ejecutando " + PropertiesUtil.DEAL + " DealId: " + dealId);
+			System.out.println("Ejecutando " + queryUpdateRepair);
+			log.info("Ejecutando " + queryUpdateRepair);
 
 		} catch (SQLException e) {
+			log.error("No se pudo ejecutar " + queryUpdateRepair);
 		}
 		return true;
 
