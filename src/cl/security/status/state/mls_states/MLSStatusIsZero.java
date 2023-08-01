@@ -36,6 +36,8 @@ public class MLSStatusIsZero extends KGRStatusState {
 		DeleteMessage.deleteMessage(p);
 		// Crea Archivo
 		kgrStatusValue.createKisFile(p);
+		
+		DeleteMessage.deleteMessage(p);
 
 	}
 
