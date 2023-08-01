@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import cl.security.mdd.dao.DealDao;
 import cl.security.mdd.enums.KGRStatusValueEnum;
 import cl.security.mdd.retries.RetryLogic;
@@ -14,8 +16,9 @@ import cl.security.status.strategy.StatusStrategy;
 import cl.security.utils.Constants;
 
 public class DealProcessThread implements Runnable {
-
-	StatusStrategy strategy;
+	
+	Logger log = Logger.getLogger(DealProcessThread.class);
+	StatusStrategy strategy = CheckJob.status.get(Constants.MLS);
 	Deal deal;
 	private Map<Integer, String> numToWord;
 
@@ -26,10 +29,9 @@ public class DealProcessThread implements Runnable {
 
 	}
 
-	public DealProcessThread(StatusStrategy strategy, Deal deal,
+	public DealProcessThread(Deal deal,
 			Map<Integer, String> numToWord) {
 
-		this.strategy = strategy;
 		this.deal = deal;
 		this.numToWord = numToWord;
 
@@ -63,8 +65,6 @@ public class DealProcessThread implements Runnable {
 
 		Set<Deal> processedDealSet = new HashSet<>();
 
-		strategy = CheckJob.status.get(Constants.MLS);
-
 		int mlsStatusValue = strategy.getStatus(deal);
 
 		RetryLogic retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 5000, deal.getRetries());
@@ -73,23 +73,28 @@ public class DealProcessThread implements Runnable {
 			
 			retryLogic.retryImpl(r -> {
 
-				boolean statusReadyMLS = strategy.getStatusReady(deal);
+				//boolean statusReadyMLS = strategy.getStatusReady(deal);
 
 //				System.out.println(String.format("Deal %s con retries ", deal.getDealId(), retryLogic.retryAttempts));
 				// Loop de 6 reintentos hasta que el statusReady sea true
-				if (statusReadyMLS) {
+				if (true) {
 
 					strategy = CheckJob.status.get(Constants.KRG);
+					int kgrStatusInt = strategy.getStatus(deal);
+					log.info("KGRSTATUS de la BD es: " + kgrStatusInt);
 
-					String krgStatusValue = numToWord.get(strategy.getStatus(deal));
+					String krgStatusValue = numToWord.get(kgrStatusInt);
 
 					KGRStatusState kgrStatusState = KGRStatusValueEnum.valueOf(krgStatusValue).setState(mlsStatusValue,
 							deal);
 
 					int krgStatusValueInt = KGRStatusValueEnum.valueOf(krgStatusValue).num;
 
-					System.out.println("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue
-							+ " para deal " + deal.getDealId());
+					System.out.println("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue + " para deal "
+							+ deal.getDealId());
+
+					log.info("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue + " para deal "
+							+ deal.getDealId());
 
 					kgrStatusState.executeUpdates(krgStatusValueInt);
 
@@ -97,12 +102,14 @@ public class DealProcessThread implements Runnable {
 						r.stopExecution();
 						System.out.println("Detiene Reintentos");
 						System.out.println("Deal: " + deal.getDealId() + " Ya se ejecutó");
-//						System.out.println(String.format("Deal %s VAMOS A REINTENTAR", deal.getDealId()));
+						log.info("Detiene Reintentos");
+						log.info("Deal: " + deal.getDealId() + " Ya se ejecutó");
 					} else {
 						System.out.println("Retry Attemps: " + r.getRetryAttempts() + " Deal: "
 								+ deal.getDealId() + " todavia se ejecuta");
 
 						if (r.getRetryAttempts() == 0) {
+							log.info("Aca no deberia entrar");
 							// ACTUALIZAR DEAL A P EN LA BD
 							strategy = CheckJob.status.get(Constants.KONDOR);
 							strategy.updateStatusDealList(deal);

@@ -50,9 +50,12 @@ public class ApplicationStatus implements Runnable {
 				log.error("No se pudo obtener los Deals");
 			}
 
+			log.info("tamano set " + DealDao.dealSet.size());
+			
 			DealDao.dealSet.forEach(deal -> {
 				
-				DealProcessThread process = new DealProcessThread(strategy, deal, numToWord);
+				log.info("DEAL del for es " + deal.getDealId());
+				DealProcessThread process = new DealProcessThread(deal, numToWord);
 				new Thread(process).start();
 
 			});

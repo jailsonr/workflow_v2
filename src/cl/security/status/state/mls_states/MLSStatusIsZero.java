@@ -29,15 +29,12 @@ public class MLSStatusIsZero extends KGRStatusState {
 		
 		log.info(" SE EJECUTA kgrStatusIsTwoExecution");
 		
-		
 		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N","N", "N");
 		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(), deal.getTransactionId());
 
 		DeleteMessage.deleteMessage(p);
 		// Crea Archivo
 		kgrStatusValue.createKisFile(p);
-		
-		DeleteMessage.deleteMessage(p);
 
 	}
 
@@ -56,7 +53,7 @@ public class MLSStatusIsZero extends KGRStatusState {
 	@Override
 	public void kgrStatusIsFourExecution() {
 		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
-				"N", "N");
+				"N", "S");
 		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
 				deal.getTransactionId());
 		kgrStatusValue.overDraftLogger("KGR", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());

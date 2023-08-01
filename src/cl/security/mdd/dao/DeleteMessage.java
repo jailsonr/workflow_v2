@@ -31,15 +31,15 @@ public class DeleteMessage {
 			cs.setInt(2, p.getDealsId());
 			cs.setString(3, p.getDataBaseName().toUpperCase());
 
-			log.info("Executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query);
-			System.out.println("Executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query);
+			log.info("Ejecutando " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + p.getKdbTablesId() + "," + p.getDealsId() + "," + p.getDataBaseName().toUpperCase());
+			System.out.println("Executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + p.getKdbTablesId() + "," + p.getDealsId() + "," + p.getDataBaseName().toUpperCase());
 
 			cs.executeUpdate();
 
 		} catch (SQLException e) {
 
 			e.printStackTrace();
-			log.error("Not executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + ".Error: " + e.getMessage());
+			log.error("Not executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + " " + p.getKdbTablesId() + "," + p.getDealsId() + "," + p.getDataBaseName().toUpperCase() + ". Error: " + e.getMessage());
 			System.out.println("Not executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + ".Error: " + e.getMessage());
 
 		} finally {
