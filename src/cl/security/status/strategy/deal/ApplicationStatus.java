@@ -23,7 +23,6 @@ public class ApplicationStatus implements Runnable {
 	private Map<Integer, String> numToWord = new HashMap<>();
 	private StatusStrategy strategy = null;
 	private Params p;
-	RetryLogic retryLogic;
 	Logger log = Logger.getLogger(ApplicationStatus.class);
 
 	public ApplicationStatus process(StatusStrategy strategy, Params p) {
@@ -53,7 +52,7 @@ public class ApplicationStatus implements Runnable {
 
 			DealDao.dealSet.forEach(deal -> {
 				
-				DealProcessThread process = new DealProcessThread(strategy, deal, retryLogic, numToWord);
+				DealProcessThread process = new DealProcessThread(strategy, deal, numToWord);
 				new Thread(process).start();
 
 			});

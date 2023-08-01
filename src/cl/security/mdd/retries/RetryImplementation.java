@@ -3,6 +3,6 @@ package cl.security.mdd.retries;
 @FunctionalInterface
 public interface RetryImplementation {
 	
-	void run();
+	void run(RetryLogic r);
 
 }
