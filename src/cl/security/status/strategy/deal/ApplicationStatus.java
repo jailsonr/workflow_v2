@@ -11,7 +11,7 @@ import cl.security.mdd.dao.DealDao;
 import cl.security.mdd.dao.Repair;
 import cl.security.mdd.dao.RepairKGR;
 import cl.security.mdd.dao.RepairMLS;
-import cl.security.mdd.retries.RetryLogic;
+import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.status.strategy.StatusStrategy;
 import cl.security.status.strategy.status.KGRStatus;
@@ -43,22 +43,16 @@ public class ApplicationStatus implements Runnable {
 	public void run() {
 
 		if (strategy instanceof KondorStatus) {
-
+			
+			DealDao dao = new DealDao();
+			Deal deal = new Deal();
 			try {
-				DealDao.loadDeals();
+				deal = dao.getDealBD(this.p.getDealsId(), this.p.getKdbTablesId());
 			} catch (SQLException e1) {
 				log.error("No se pudo obtener los Deals");
 			}
-
-			log.info("tamano set " + DealDao.dealSet.size());
-			
-			DealDao.dealSet.forEach(deal -> {
-				
-				log.info("DEAL del for es " + deal.getDealId());
-				DealProcessThread process = new DealProcessThread(deal, numToWord);
-				new Thread(process).start();
-
-			});
+			DealProcessThread process = new DealProcessThread(deal, numToWord);
+			new Thread(process).start();
 
 		} else {
 

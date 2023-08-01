@@ -18,7 +18,6 @@ public final class DealDao {
 	public static Logger log = Logger.getLogger(DealDao.class);
 
 	public static Set<Deal> dealSet = new HashSet<>();
-	public static Set<Deal> processedDealSet = new HashSet<>();
 
 	public static void loadDeals() throws SQLException {
 		Connection con = DatabaseConnection.getInstance().getConnection();
@@ -56,6 +55,47 @@ public final class DealDao {
 			log.error("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
 			System.out.println("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
 		}
+
+	}
+	
+	public Deal getDealBD(int dealId, int kdbTable) throws SQLException {
+		Connection con = DatabaseConnection.getInstance().getConnection();
+		Deal deal = null;
+
+		try (CallableStatement cs = con.prepareCall(QueryEnum.GET_DEAL_LIST.query);) {
+
+			cs.setInt(1, dealId);
+			cs.setInt(2, kdbTable);
+
+			ResultSet rs = cs.executeQuery();
+
+			log.info("Executed " + QueryEnum.GET_DEAL_LIST.query);
+			System.out.println("Executed " + QueryEnum.GET_DEAL_LIST.query);
+
+			while (rs.next()) {
+				deal = new Deal();
+				deal.setDealId(rs.getInt("DealId"));
+				deal.setKdbTableId(rs.getInt("KdbTableId"));
+				deal.setTransactionId(rs.getInt("TransactionId"));
+				deal.setRetries(rs.getInt("Retries"));
+				deal.setAction(rs.getString("Action"));
+				deal.setStatus(rs.getString("Status"));
+				deal.setVersion(rs.getInt("Version"));
+
+				log.info("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
+						+ ", TransactionId: " + rs.getInt("TransactionId"));
+				System.out.println("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
+						+ ", TransactionId: " + rs.getInt("TransactionId"));
+
+
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+			log.error("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
+			System.out.println("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
+		}
+		
+		return deal;
 
 	}
 
