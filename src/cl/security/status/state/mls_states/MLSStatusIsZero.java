@@ -23,20 +23,13 @@ public class MLSStatusIsZero extends KGRStatusState {
 	@Override
 	public void kgrStatusIsTwoExecution() {
 		
-		String reparo = "N";
-		
-		
-		Repair repair = new RepairKGR().build(p, reparo);
-		
-		RepairEnum.valueOf(reparo).queryUpdateRepair(repair);
-		
+		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N",
+				"N", "N");
 		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
 				deal.getTransactionId());
 		
-//		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N",
-//				"N", "N");
-//		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
-//				deal.getTransactionId());
+		// Crea Archivo
+		kgrStatusValue.createKisFile(p);
 
 	}
 

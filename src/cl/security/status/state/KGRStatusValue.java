@@ -8,7 +8,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import cl.security.database.DatabaseConnection;
+import cl.security.mdd.dao.KisFileDAO;
 import cl.security.model.Deal;
+import cl.security.model.Params;
 import cl.security.utils.Constants;
 import cl.security.utils.PropertiesUtil;
 
@@ -89,6 +91,20 @@ public class KGRStatusValue {
 			cs.execute();
 		} catch (SQLException e) {
 		}
+
+	}
+	public void createKisFile(Params p) {
+		String fileName = null;
+		KisFileDAO create = new KisFileDAO();
+		int dealsId = create.getKISDealId(p.getKdbTablesId(), p.getDealsId());
+		fileName = create.importFile(dealsId, p.getKdbTablesId(), 0, "Y");
+		
+		//PropertyConfigurator.configure(Constants.LOG4J);
+		//Logger log = Logger.getLogger(RepairKGR.class);
+		
+		System.out.println("Creando archivo KIS");
+		//log.info("Creando archivo KIS");
+		
 
 	}
 
