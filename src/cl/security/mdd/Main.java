@@ -21,8 +21,9 @@ public class Main {
 		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 		
 		log.info("Iniciando nueva ejecución Workflow");
+		System.out.println("Iniciando nueva ejecución Workflow");
 
-		executorService.scheduleAtFixedRate(new CheckJob(), 0, 5, TimeUnit.SECONDS);
+		executorService.scheduleAtFixedRate(new CheckJob(), 0, 15, TimeUnit.SECONDS);
 
 	}
 

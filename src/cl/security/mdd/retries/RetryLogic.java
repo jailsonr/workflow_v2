@@ -16,7 +16,7 @@ public class RetryLogic {
 		if (shouldRetry()) {
 			retryAttempts--;
 			dealReties++;
-			retryImplementation.run();
+			retryImplementation.run(this);
 			waitBeforeNextRetry();
 		} else {
 

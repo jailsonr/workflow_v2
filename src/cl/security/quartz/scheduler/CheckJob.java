@@ -32,11 +32,13 @@ public class CheckJob implements Runnable {
 				
 				status = getInstatiatedStatusClasses();
 				log.info("Obtencion de clases de estados");
+				System.out.println("Obtencion de clases de estados");
 				
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				
 				e.printStackTrace();
 				log.error("Error obtencion de clases de estados" + e.getMessage());
+				System.out.println("Error obtencion de clases de estados" + e.getMessage());
 				
 			}
 
@@ -44,6 +46,7 @@ public class CheckJob implements Runnable {
 			String dataBaseName = param.getDataBaseName();
 			strategy = status.get(dataBaseName.toLowerCase());
 			log.info("Definiendo estrategia " + strategy.toString());
+			System.out.println("Definiendo estrategia " + strategy.toString());
 			
 			new Thread(appStatus.process(strategy, param)).start();
 			

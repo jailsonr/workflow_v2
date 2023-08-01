@@ -39,8 +39,8 @@ public abstract class Repair {
 	public void deleteMessage(Params p) {
 		// PropertyConfigurator.configure(Constants.LOG4J);
 		// Logger log = Logger.getLogger(Repair.class);
-		System.out.println("Eliminando mensaje de la tabla");
-		log.info("Eliminando mensaje de la tabla para " + p.getDealsId());
+		System.out.println("Eliminando mensaje de la tabla " + p.getKdbTablesId() + " " + p.getDealsId());
+		log.info("Eliminando mensaje de la tabla para " + p.getKdbTablesId() + " " + p.getDealsId());
 		DeleteMessage.deleteMessage(p);
 	}
 

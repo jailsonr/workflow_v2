@@ -29,11 +29,8 @@ public class RepairKGR extends Repair {
 		int dealsId = create.getKISDealId(p.getKdbTablesId(), p.getDealsId());
 		fileName = create.importFile(dealsId, p.getKdbTablesId(), 0, "Y");
 		
-		//PropertyConfigurator.configure(Constants.LOG4J);
-		//Logger log = Logger.getLogger(RepairKGR.class);
-		
-		System.out.println("Creando archivo KIS");
-		//log.info("Creando archivo KIS");
+		System.out.println("Creando archivo KIS" + p.getKdbTablesId() + " " + p.getDealsId());
+		log.info("Creando archivo KIS" + p.getKdbTablesId() + " " + p.getDealsId());;
 		
 		super.deleteMessage(p);
 
@@ -41,27 +38,29 @@ public class RepairKGR extends Repair {
 
 	@Override
 	public Repair queryUpdateRepair(int dealId, int kdbTablesId, String repKGR, String repMLS, String envBO) {
-
-		//PropertyConfigurator.configure(Constants.LOG4J);
-		//Logger log = Logger.getLogger(RepairKGR.class);
 		
-		//System.out.println("Ejecutando " + PropertiesUtil.FLAGS + " DealId: " + dealId);
-		//String storeProcedure = "{call Kustom.." + PropertiesUtil.FLAGS + "(?,?,?,?,?,?)}";
-		System.out.println("Ejecutando " + QueryEnum.FLAGS_DEALS.query + " DealId: " + dealId);
-		log.info("Ejecutando " + QueryEnum.FLAGS_DEALS.query + " DealId: " + dealId);
-		//log.info("Ejecutando " + QueryEnum.FLAGS_DEALS.query + " DealId: " + dealId);
 		String storeProcedure = QueryEnum.FLAGS_DEALS.query;
 		
 		try (CallableStatement cs = getConn().prepareCall(storeProcedure);) {
+			
 			cs.setString(1, "U");
 			cs.setInt(2, kdbTablesId);
 			cs.setInt(3, dealId);
 			cs.setString(4, repKGR);
 			cs.setString(5, repMLS);
 			cs.setString(6, envBO);
+			
+			System.out.println("Ejecutando RepairKGR " + QueryEnum.FLAGS_DEALS.query + " @Origen, @KdbTables_Id, @DealId, @RepKGR, @RepMLS, @Bloqueo");
+			System.out.println("Ejecutando RepairKGR " + QueryEnum.FLAGS_DEALS.query + "U , " + kdbTablesId + ", " + dealId + ", " + repKGR + ", " + repMLS + ", " + envBO);			
+			log.info("Ejecutando RepairKGR " + QueryEnum.FLAGS_DEALS.query + " @Origen, @KdbTables_Id, @DealId, @RepKGR, @RepMLS, @Bloqueo");
+			log.info("Ejecutando RepairKGR " + QueryEnum.FLAGS_DEALS.query + "U , " + kdbTablesId + ", " + dealId + ", " + repKGR + ", " + repMLS + ", " + envBO);
+			
 			cs.execute();
 		} catch (SQLException e) {
-			log.error("No se pudo ejecutar " + storeProcedure);
+			
+			System.out.println("No se pudo ejecutar RepairKGR " + storeProcedure + " " + e.getMessage());
+			log.error("No se pudo ejecutar RepairKGR " + storeProcedure + " " + e.getMessage());
+			
 		}
 
 	

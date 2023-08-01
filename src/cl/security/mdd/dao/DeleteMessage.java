@@ -20,6 +20,7 @@ public class DeleteMessage {
 			con = DatabaseConnection.getInstance().getConnection();
 		} catch (SQLException e1) {
 			log.error("No se pudo obtener conexion");
+			System.out.println("No se pudo obtener conexion");
 		}
 
 		String query = QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query;
@@ -39,11 +40,12 @@ public class DeleteMessage {
 
 			e.printStackTrace();
 			log.error("Not executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + ".Error: " + e.getMessage());
+			System.out.println("Not executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + ".Error: " + e.getMessage());
 
 		} finally {
 
-			System.out.println("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
 			log.info("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
+			System.out.println("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
 
 		}
 

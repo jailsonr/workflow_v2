@@ -1,5 +1,7 @@
 package cl.security.status.state.mls_states;
 
+import org.apache.log4j.Logger;
+
 import cl.security.database.utils.RepairEnum;
 import cl.security.mdd.dao.DeleteMessage;
 import cl.security.mdd.dao.Repair;
@@ -10,6 +12,8 @@ import cl.security.status.state.KGRStatusState;
 import cl.security.status.state.KGRStatusValue;
 
 public class MLSStatusIsZero extends KGRStatusState {
+	
+	Logger log = Logger.getLogger(MLSStatusIsZero.class);
 	
 	private Deal deal;
 	
@@ -23,11 +27,13 @@ public class MLSStatusIsZero extends KGRStatusState {
 	@Override
 	public void kgrStatusIsTwoExecution() {
 		
-		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N",
-				"N", "N");
-		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
-				deal.getTransactionId());
+		log.info(" SE EJECUTA kgrStatusIsTwoExecution");
 		
+		
+		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "N","N", "N");
+		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(), deal.getTransactionId());
+
+		DeleteMessage.deleteMessage(p);
 		// Crea Archivo
 		kgrStatusValue.createKisFile(p);
 

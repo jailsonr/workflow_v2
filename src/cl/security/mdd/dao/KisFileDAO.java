@@ -53,15 +53,18 @@ public class KisFileDAO {
 			cs.setInt(2, dealId);
 			cs.setString(3, KGRRequest);
 
-			log.info("Executed " + QueryEnum.IMPORT_FILE.query);
-			System.out.println("Executed " + QueryEnum.IMPORT_FILE.query);
+			log.info("Executed " + QueryEnum.IMPORT_FILE.query + " " + kdbTableId + ", " + dealId + ", @DealRequest");
+			System.out.println("Executed " + QueryEnum.IMPORT_FILE.query + " " + kdbTableId + ", " + dealId + ", @DealRequest");
 
 			rs = cs.executeQuery();
+			
+			log.info(kdbTableId + ", " + dealId + ", @DealRequest " + rs);
 
 		} catch (SQLException e2) {
 
 			e2.printStackTrace();
-			log.error("Not executed " + QueryEnum.IMPORT_FILE.query + ".Error: " + e2.getMessage());
+			log.error("Not executed " + QueryEnum.IMPORT_FILE.query + " " + kdbTableId + ", " + dealId + ", @DealRequest" + ".Error: " + e2.getMessage());
+			System.out.println("Not executed " + QueryEnum.IMPORT_FILE.query + " " + kdbTableId + ", " + dealId + ", @DealRequest" + ".Error: " + e2.getMessage());
 
 		}
 
@@ -110,6 +113,7 @@ public class KisFileDAO {
 		String template = null;
 		String dealId2 = null;
 
+		log.info("Mapa: " + mapa.size());
 		System.out.println("Mapa: " + mapa.size());
 
 		if (mapa.size() == 3) {

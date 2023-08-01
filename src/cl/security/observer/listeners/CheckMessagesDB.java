@@ -27,10 +27,12 @@ public class CheckMessagesDB {
 
 			con = DatabaseConnection.getInstance().getConnection();
 			log.info("Conexion establecida");
+			System.out.println("Conexion establecida");
 
 		} catch (SQLException e) {
 
 			log.error("No se pudo obtener conexion. Error: " + e.getMessage());
+			System.out.println("No se pudo obtener conexion. Error: " + e.getMessage());
 
 		}
 
@@ -56,7 +58,10 @@ public class CheckMessagesDB {
 			}
 
 		} catch (SQLException e) {
+			
 			log.error("Not executed " + QueryEnum.VERIFY_MESSAGES.query + ".Error: " + e.getMessage());
+			System.out.println("Not executed " + QueryEnum.VERIFY_MESSAGES.query + ".Error: " + e.getMessage());
+			
 		}
 
 	}

@@ -45,6 +45,8 @@ public final class DealDao {
 
 				log.info("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
 						+ ", TransactionId: " + rs.getInt("TransactionId"));
+				System.out.println("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
+						+ ", TransactionId: " + rs.getInt("TransactionId"));
 
 				dealSet.add(deal);
 
@@ -52,6 +54,7 @@ public final class DealDao {
 		} catch (Exception e) {
 			System.out.println(e);
 			log.error("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
+			System.out.println("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
 		}
 
 	}

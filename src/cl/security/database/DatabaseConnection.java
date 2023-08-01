@@ -47,9 +47,11 @@ public class DatabaseConnection {
 			this.connection.close();
 			instance = null;
 			log.info("Database Connection Close Success");
+			System.out.println("Database Connection Close Success");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			log.error("Database Connection Close Failed : " + e.getMessage());
+			System.out.println("Database Connection Close Failed : " + e.getMessage());
 		}
 	}
 
