@@ -17,7 +17,6 @@ public class DealProcessThread implements Runnable {
 
 	StatusStrategy strategy;
 	Deal deal;
-	RetryLogic retryLogic;
 	private Map<Integer, String> numToWord;
 
 	private void removeDealsFromSet(Set<Deal> processedDealSet) {
@@ -27,15 +26,37 @@ public class DealProcessThread implements Runnable {
 
 	}
 
-	public DealProcessThread(StatusStrategy strategy, Deal deal, RetryLogic retryLogic,
+	public DealProcessThread(StatusStrategy strategy, Deal deal,
 			Map<Integer, String> numToWord) {
 
 		this.strategy = strategy;
 		this.deal = deal;
-		this.retryLogic = retryLogic;
 		this.numToWord = numToWord;
 
 	}
+	
+//	public static void main(String[] args) {
+//		RetryLogic retryLogic = new RetryLogic(6, 5000, 0);
+//		
+//		while (retryLogic.shouldRetry()) {
+//			System.out.println("Inicio");
+//			
+//			retryLogic.retryImpl(() -> {
+//				int a = new Random().nextInt();
+//				System.out.println("a " + a);
+//				for (int i = 1; i<200;i++) {
+//					if (a % 2 == 0) {
+//						retryLogic.stopExecution();
+//						System.out.println("Deberia detenerse");
+//						System.out.println("Se ejecutó " + i + "x");
+//						//break;
+//					}
+//				}
+//			});
+//			
+//			
+//		}
+//	}
 
 	@Override
 	public void run() {
@@ -46,10 +67,11 @@ public class DealProcessThread implements Runnable {
 
 		int mlsStatusValue = strategy.getStatus(deal);
 
-		retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 5000, deal.getRetries());
+		RetryLogic retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 5000, deal.getRetries());
 
 		while (retryLogic.shouldRetry()) {
-			retryLogic.retryImpl(() -> {
+			
+			retryLogic.retryImpl(r -> {
 
 				boolean statusReadyMLS = strategy.getStatusReady(deal);
 
@@ -72,15 +94,15 @@ public class DealProcessThread implements Runnable {
 					kgrStatusState.executeUpdates(krgStatusValueInt);
 
 					if (krgStatusValueInt >= 2) {
-						retryLogic.stopExecution();
+						r.stopExecution();
 						System.out.println("Detiene Reintentos");
 						System.out.println("Deal: " + deal.getDealId() + " Ya se ejecutó");
 //						System.out.println(String.format("Deal %s VAMOS A REINTENTAR", deal.getDealId()));
 					} else {
-						System.out.println("Retry Attemps: " + retryLogic.getRetryAttempts() + " Deal: "
+						System.out.println("Retry Attemps: " + r.getRetryAttempts() + " Deal: "
 								+ deal.getDealId() + " todavia se ejecuta");
 
-						if (retryLogic.getRetryAttempts() == 0) {
+						if (r.getRetryAttempts() == 0) {
 							// ACTUALIZAR DEAL A P EN LA BD
 							strategy = CheckJob.status.get(Constants.KONDOR);
 							strategy.updateStatusDealList(deal);
@@ -99,15 +121,15 @@ public class DealProcessThread implements Runnable {
 			});
 		}
 
-		if (!retryLogic.shouldRetry()) {
-			System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
-			// Despues de los 6 intentos se elimina objeto de la lista
-			processedDealSet.add(deal);
-
-			strategy = CheckJob.status.get(Constants.KONDOR);
-			strategy.updateStatusDealList(deal);
-
-		}
+//		if (!retryLogic.shouldRetry()) {
+//			System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
+//			// Despues de los 6 intentos se elimina objeto de la lista
+//			processedDealSet.add(deal);
+//
+//			strategy = CheckJob.status.get(Constants.KONDOR);
+//			strategy.updateStatusDealList(deal);
+//
+//		}
 
 		retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, 1);
 
@@ -117,7 +139,7 @@ public class DealProcessThread implements Runnable {
 
 		} catch (Exception e) {
 
-			retryLogic.retryImpl(() -> {
+			retryLogic.retryImpl(r -> {
 				removeDealsFromSet(processedDealSet);
 			});
 
