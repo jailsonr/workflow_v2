@@ -53,13 +53,10 @@ public class KisFileDAO {
 			cs.setInt(2, dealId);
 			cs.setString(3, KGRRequest);
 
-			log.info("Executed " + QueryEnum.IMPORT_FILE.query + " " + kdbTableId + ", " + dealId + ", KG");
-			System.out.println(
-					"Executed " + QueryEnum.IMPORT_FILE.query + " " + kdbTableId + ", " + dealId + ", @DealRequest");
+			log.info("Executed " + storeProcedure + " " + kdbTableId + ", " + dealId + ", " + KGRRequest);
+			System.out.println("Executed " + storeProcedure + " " + kdbTableId + ", " + dealId + ", " + KGRRequest);
 
 			rs = cs.executeQuery();
-
-			log.info(kdbTableId + ", " + dealId + ", @DealRequest " + rs);
 
 			int i = 0;
 			this.mapas = new HashMap<Integer, KISFile>();
@@ -83,10 +80,10 @@ public class KisFileDAO {
 		} catch (SQLException e2) {
 
 			e2.printStackTrace();
-			log.error("Not executed " + QueryEnum.IMPORT_FILE.query + " " + kdbTableId + ", " + dealId
-					+ ", @DealRequest" + ".Error: " + e2.getMessage());
-			System.out.println("Not executed " + QueryEnum.IMPORT_FILE.query + " " + kdbTableId + ", " + dealId
-					+ ", @DealRequest" + ".Error: " + e2.getMessage());
+			log.error("Not executed " + storeProcedure + " " + kdbTableId + ", " + dealId + ", " + KGRRequest
+					+ ".Error: " + e2.getMessage());
+			System.out.println("Not executed " + storeProcedure + " " + kdbTableId + ", " + dealId + ", " + KGRRequest
+					+ ".Error: " + e2.getMessage());
 
 		}
 
@@ -95,7 +92,10 @@ public class KisFileDAO {
 			this.fileName = this.createKISFile(this.mapas, dealId);
 
 			log.info("CREATE KISFILE" + " " + kdbTableId + "," + dealId);
+			
 		} catch (IOException e4) {
+			
+			e4.printStackTrace();
 			log.error("CREATE KISFILE" + " " + kdbTableId + "," + dealId + " ERROR: " + e4.getMessage());
 		}
 
@@ -107,9 +107,6 @@ public class KisFileDAO {
 
 		String template = null;
 		String dealId2 = null;
-
-		log.info("Mapa: " + mapa.size());
-		System.out.println("Mapa: " + mapa.size());
 
 		if (mapa.size() == 3) {
 
@@ -138,7 +135,7 @@ public class KisFileDAO {
 
 					if (!getParamName.equals("DealId")) {
 
-						log.info("!DealId: " + getParamName);
+						log.info("DealId: " + getParamName);
 						continue;
 
 					}
@@ -163,8 +160,8 @@ public class KisFileDAO {
 		PrintWriter writer = null;
 		String line = null;
 		final File In = new File(String.valueOf(this.routeTemplates) + template);
-		log.info(routeKisFile);
-		log.info(routeTemplates);
+		log.debug(routeKisFile);
+		log.debug(routeTemplates);
 		final File Out = new File(FileNameCreate);
 
 		try {
@@ -191,6 +188,7 @@ public class KisFileDAO {
 
 		} catch (IOException e3) {
 
+			e3.printStackTrace();
 			log.error(e3.getMessage());
 
 		}
@@ -201,11 +199,12 @@ public class KisFileDAO {
 	}
 
 	public int getKISDealId(int kdbTableId, int dealId) {
-		// final String storeProcedure = "{call " + PropertiesUtil.GETKISDEAL +
-		// "(?,?,?)}";
+		
 		final String storeProcedure = QueryEnum.GET_KIS_DEAL_ID.query;
 		int dealsIdOut = 0;
+		
 		try (CallableStatement cs = DatabaseConnection.getInstance().getConnection().prepareCall(storeProcedure);) {
+			
 			cs.setInt(1, kdbTableId);
 			cs.setInt(2, dealId);
 			cs.registerOutParameter(3, 4);
@@ -215,11 +214,13 @@ public class KisFileDAO {
 
 			cs.execute();
 			dealsIdOut = cs.getInt(3);
-			log.info("DealIdOUTPUT: " + dealsIdOut);
 
 		} catch (SQLException e2) {
+			
+			e2.printStackTrace();
 			dealsIdOut = dealId;
 			log.info("DealIdOUTPUT: " + dealsIdOut + " Error: " + e2.getMessage());
+			
 		}
 		return dealsIdOut;
 	}

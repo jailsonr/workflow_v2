@@ -18,19 +18,22 @@ public class MLSStatus implements StatusStrategy {
 
 	@Override
 	public void acceptanceLogger(Params p) {
+		
 		final String spCall = QueryEnum.EXCEEDED_DEALS_ACCEPTANCE_INSERT.query;
+		
 		try (CallableStatement callableStatement = getConn().prepareCall(spCall);) {
+			
 			callableStatement.setString(1, KGR);
 			callableStatement.setInt(2, p.getKdbTablesId());
 			callableStatement.setInt(3, p.getDealsId());
-			log.info("Ejecutando " + spCall);
-			log.info("Sistema: " + KGR + " KDB Table:" + p.getKdbTablesId() + " Deal Id: " + p.getDealsId());
+			log.info("Ejecutando " + spCall+ " " + KGR + ", " + p.getKdbTablesId() + ", " + p.getDealsId());
 
 			callableStatement.execute();
 
 		} catch (SQLException e) {
-			log.error("No se pudo ejecutar" + spCall);
-			log.error("Sistema: " + KGR + " KDB Table:" + p.getKdbTablesId() + " Deal Id: " + p.getDealsId());
+			
+			e.getStackTrace();
+			log.error("No se pudo ejecutar" + spCall + " " + KGR + ", " + p.getKdbTablesId() + ", " + p.getDealsId() + ". Error: " + e.getMessage());
 		}
 
 	}
@@ -42,6 +45,7 @@ public class MLSStatus implements StatusStrategy {
 
 	@Override
 	public int getStatus(Deal deal) {
+		
 		int status = 0;
 		String query = QueryEnum.MLS_STATUS_GET.query;
 
@@ -50,14 +54,15 @@ public class MLSStatus implements StatusStrategy {
 			cs.setInt(1, deal.getKdbTableId());
 			cs.setInt(2, deal.getDealId());
 			cs.registerOutParameter(3, 4);
-			log.info("Ejecutando " + query);
-			log.info("KDB Table:" + deal.getKdbTableId() + " Deal Id: " + deal.getDealId());
+			log.info("Ejecutando " + query + " " + deal.getKdbTableId() + ", " + deal.getDealId() + ", @MLSStatus");
 
 			cs.execute();
 			status = cs.getInt(3);
 		} catch (SQLException e2) {
-			log.error("No se pudo ejecutar" + query);
-			log.error("KDB Table:" + deal.getKdbTableId() + " Deal Id: " + deal.getDealId());
+			
+			e2.getStackTrace();
+			log.error("No se pudo ejecutar" + query + " " + deal.getKdbTableId() + ", " + deal.getDealId() + ", @MLSStatus. Error: " + e2.getMessage());
+
 		}
 
 		return status;

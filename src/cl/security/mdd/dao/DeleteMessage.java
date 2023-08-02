@@ -19,8 +19,10 @@ public class DeleteMessage {
 		try {
 			con = DatabaseConnection.getInstance().getConnection();
 		} catch (SQLException e1) {
-			log.error("No se pudo obtener conexion");
-			System.out.println("No se pudo obtener conexion");
+			
+			e1.getStackTrace();
+			log.error("No se pudo obtener conexion. Error: " + e1.getMessage());
+
 		}
 
 		String query = QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query;
@@ -31,21 +33,19 @@ public class DeleteMessage {
 			cs.setInt(2, p.getDealsId());
 			cs.setString(3, p.getDataBaseName().toUpperCase());
 
-			log.info("Ejecutando " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + p.getKdbTablesId() + "," + p.getDealsId() + "," + p.getDataBaseName().toUpperCase());
-			System.out.println("Executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + p.getKdbTablesId() + "," + p.getDealsId() + "," + p.getDataBaseName().toUpperCase());
+			log.info("Ejecutando " + query + " " + p.getKdbTablesId() + ", " + p.getDealsId() + ", " + p.getDataBaseName().toUpperCase());
+			System.out.println("Executed " + query + " " + p.getKdbTablesId() + ", " + p.getDealsId() + ", " + p.getDataBaseName().toUpperCase());
 
 			cs.executeUpdate();
 
 		} catch (SQLException e) {
 
 			e.printStackTrace();
-			log.error("Not executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + " " + p.getKdbTablesId() + "," + p.getDealsId() + "," + p.getDataBaseName().toUpperCase() + ". Error: " + e.getMessage());
-			System.out.println("Not executed " + QueryEnum.MESSAGES_IN_PROGRESS_DELETE.query + ".Error: " + e.getMessage());
+			log.error("Not executed " + query + " " + p.getKdbTablesId() + ", " + p.getDealsId() + ", " + p.getDataBaseName().toUpperCase() + ". Error: " + e.getMessage());
 
 		} finally {
 
-			log.info("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
-			System.out.println("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDealsId());
+			log.info("Se eliminó de la tabla WKF_MessagesInProgress " + p.getDataBaseName().toUpperCase() + " " + p.getKdbTablesId() + " " + p.getDealsId());
 
 		}
 

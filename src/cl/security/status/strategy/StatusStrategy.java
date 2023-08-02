@@ -24,7 +24,9 @@ public interface StatusStrategy {
 			return DatabaseConnection.getInstance().getConnection();
 
 		} catch (SQLException e) {
-			log.error("No se pudo obtener conexion con la base de datos");
+			
+			e.getStackTrace();
+			log.error("No se pudo conectar. Error:  " + e.getMessage());
 		}
 
 		return null;
@@ -46,10 +48,10 @@ public interface StatusStrategy {
 			cs.setString(5, null);
 			cs.setString(6, null);
 
-			log.info("Ejecutando " + storeProcedure);
-			log.info("S, KDBTable: " + p.getKdbTablesId() + " Deal Id: " + p.getDealsId());
+			log.info("Ejecutando " + storeProcedure + " S, " + p.getKdbTablesId() + ", " + p.getDealsId() + ", null, null, null");
 
 			rs = cs.executeQuery();
+			
 			if (rs.next()) {
 
 				if (rs.getObject("RepMLS") != null) {
@@ -68,8 +70,9 @@ public interface StatusStrategy {
 
 			}
 		} catch (SQLException e) {
-			log.error("No se pudo ejecutar: " + storeProcedure);
-			log.error("S, KDBTable: " + p.getKdbTablesId() + " Deal Id: " + p.getDealsId());
+			
+			e.getStackTrace();
+			log.error("No se pudo ejecutar: " + storeProcedure+ " S, " + p.getKdbTablesId() + ", " + p.getDealsId() + ", null, null, null. Error: " + e.getMessage());
 
 		}
 
@@ -92,17 +95,15 @@ public interface StatusStrategy {
 			cs.setInt(2, deal.getTransactionId());
 			cs.setDouble(3, deal.getDealId());
 			cs.registerOutParameter(4, Types.INTEGER);
-			log.info("Ejecutando " + storeProcedure);
-			log.info("KDBTable: " + deal.getKdbTableId() + " Transaction Id: " + deal.getTransactionId() + " Deal Id: "
-					+ deal.getDealId());
+			log.info("Ejecutando " + storeProcedure + " " + deal.getKdbTableId() + ", " + deal.getTransactionId() + ", " + deal.getDealId() + ", @MLSStatus");
 			cs.execute();
 			status = cs.getInt(4);
 
 		} catch (SQLException e) {
-			log.error("No se pudo ejecutar: " + storeProcedure);
-			log.error("KDBTable: " + deal.getKdbTableId() + " Transaction Id: " + deal.getTransactionId() + " Deal Id: "
-					+ deal.getDealId());
-
+			
+			e.getStackTrace();
+			log.error("No se pudo ejecutar: " + storeProcedure + " " + deal.getKdbTableId() + ", " + deal.getTransactionId() + ", " + deal.getDealId() + ", @MLSStatus. Error: " + e.getMessage());
+			
 		}
 
 		return status != 0;

@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import cl.security.mdd.dao.DealDao;
 import cl.security.mdd.enums.KGRStatusValueEnum;
 import cl.security.mdd.retries.RetryLogic;
 import cl.security.model.Deal;
@@ -16,7 +15,7 @@ import cl.security.status.strategy.StatusStrategy;
 import cl.security.utils.Constants;
 
 public class DealProcessThread implements Runnable {
-	
+
 	Logger log = Logger.getLogger(DealProcessThread.class);
 	StatusStrategy strategy = CheckJob.status.get(Constants.MLS);
 	Deal deal;
@@ -24,41 +23,16 @@ public class DealProcessThread implements Runnable {
 
 	private void removeDealsFromSet(Set<Deal> processedDealSet) {
 
-		DealDao.dealSet.removeAll(processedDealSet);
 		processedDealSet.forEach(e -> System.out.println("Se eliminó deal: " + e.getDealId()));
 
 	}
 
-	public DealProcessThread(Deal deal,
-			Map<Integer, String> numToWord) {
+	public DealProcessThread(Deal deal, Map<Integer, String> numToWord) {
 
 		this.deal = deal;
 		this.numToWord = numToWord;
 
 	}
-	
-//	public static void main(String[] args) {
-//		RetryLogic retryLogic = new RetryLogic(6, 5000, 0);
-//		
-//		while (retryLogic.shouldRetry()) {
-//			System.out.println("Inicio");
-//			
-//			retryLogic.retryImpl(() -> {
-//				int a = new Random().nextInt();
-//				System.out.println("a " + a);
-//				for (int i = 1; i<200;i++) {
-//					if (a % 2 == 0) {
-//						retryLogic.stopExecution();
-//						System.out.println("Deberia detenerse");
-//						System.out.println("Se ejecutó " + i + "x");
-//						//break;
-//					}
-//				}
-//			});
-//			
-//			
-//		}
-//	}
 
 	@Override
 	public void run() {
@@ -70,18 +44,14 @@ public class DealProcessThread implements Runnable {
 		RetryLogic retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 5000, deal.getRetries());
 
 		while (retryLogic.shouldRetry()) {
-			
+
 			retryLogic.retryImpl(r -> {
-
-				//boolean statusReadyMLS = strategy.getStatusReady(deal);
-
-//				System.out.println(String.format("Deal %s con retries ", deal.getDealId(), retryLogic.retryAttempts));
-				// Loop de 6 reintentos hasta que el statusReady sea true
+				// boolean statusReadyMLS = strategy.getStatusReady(deal);
 				if (true) {
 
 					strategy = CheckJob.status.get(Constants.KRG);
 					int kgrStatusInt = strategy.getStatus(deal);
-					log.info("KGRSTATUS de la BD es: " + kgrStatusInt);
+					log.debug("KGRSTATUS de la BD es: " + kgrStatusInt);
 
 					String krgStatusValue = numToWord.get(kgrStatusInt);
 
@@ -90,32 +60,34 @@ public class DealProcessThread implements Runnable {
 
 					int krgStatusValueInt = KGRStatusValueEnum.valueOf(krgStatusValue).num;
 
-					System.out.println("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue + " para deal "
-							+ deal.getDealId());
+					System.out.println("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue
+							+ " DealId " + deal.getDealId() + " KdbTableId " + deal.getKdbTableId() + " TransActionId "
+							+ deal.getTransactionId());
 
-					log.info("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue + " para deal "
-							+ deal.getDealId());
+					log.info("KGR Status = " + krgStatusValueInt + " | MLS Status = " + mlsStatusValue + " DealId "
+							+ deal.getDealId() + " KdbTableId " + deal.getKdbTableId() + " TransActionId "
+							+ deal.getTransactionId());
 
 					kgrStatusState.executeUpdates(krgStatusValueInt);
 
 					if (krgStatusValueInt >= 2) {
+
 						r.stopExecution();
-						System.out.println("Detiene Reintentos");
-						System.out.println("Deal: " + deal.getDealId() + " Ya se ejecutó");
-						log.info("Detiene Reintentos");
-						log.info("Deal: " + deal.getDealId() + " Ya se ejecutó");
+						log.debug("Detiene Reintentos");
+						log.info("Deal: " + deal.getDealId() + " Ya se ejecuto");
+
 					} else {
-						System.out.println("Retry Attemps: " + r.getRetryAttempts() + " Deal: "
-								+ deal.getDealId() + " todavia se ejecuta");
+
+						log.debug("Retry Attemps: " + r.getRetryAttempts() + " Deal: " + deal.getDealId()
+								+ " todavia se ejecuta");
 
 						if (r.getRetryAttempts() == 0) {
-							log.info("Aca no deberia entrar");
-							// ACTUALIZAR DEAL A P EN LA BD
+
 							strategy = CheckJob.status.get(Constants.KONDOR);
 							strategy.updateStatusDealList(deal);
+
 						}
 
-//						System.out.println(String.format("Deal %s ya ha ejecutado", deal.getDealId()));
 					}
 
 					processedDealSet.add(deal);
@@ -123,20 +95,8 @@ public class DealProcessThread implements Runnable {
 
 //				retryLogic.dealReties = retryLogic.dealReties + 1;
 
-//				System.out.println(deal.getDealId() + " .");
-
 			});
 		}
-
-//		if (!retryLogic.shouldRetry()) {
-//			System.out.println(String.format("A borrar %s de la pila", deal.getDealId()));
-//			// Despues de los 6 intentos se elimina objeto de la lista
-//			processedDealSet.add(deal);
-//
-//			strategy = CheckJob.status.get(Constants.KONDOR);
-//			strategy.updateStatusDealList(deal);
-//
-//		}
 
 		retryLogic = new RetryLogic(Integer.valueOf(Constants.RETRIES), 3000, 1);
 

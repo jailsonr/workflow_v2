@@ -25,7 +25,8 @@ public abstract class Repair {
 		try {
 			return DatabaseConnection.getInstance().getConnection();
 		} catch (SQLException e) {
-			log.error("No se pudo obtener conexion.");
+			e.getStackTrace();
+			log.error("No se pudo obtener conexion. Error: " + e.getMessage());
 		}
 		return null;
 	}
@@ -37,8 +38,7 @@ public abstract class Repair {
 	public abstract Repair queryUpdateRepair(int dealId, int kdbTablesId, String repKGR, String repMLS, String envBO);
 
 	public void deleteMessage(Params p) {
-		// PropertyConfigurator.configure(Constants.LOG4J);
-		// Logger log = Logger.getLogger(Repair.class);
+		
 		System.out.println("Eliminando mensaje de la tabla " + p.getKdbTablesId() + " " + p.getDealsId());
 		log.info("Eliminando mensaje de la tabla para " + p.getKdbTablesId() + " " + p.getDealsId());
 		DeleteMessage.deleteMessage(p);
@@ -50,13 +50,18 @@ public abstract class Repair {
 				+ " AND KdbTableId = " + kdbTableId + " AND TransactionId = " + transactionId;
 
 		try (Statement stmt = DatabaseConnection.getInstance().getConnection().createStatement();) {
+			
 			stmt.executeUpdate(queryUpdateRepair);
-			System.out.println("Ejecutando " + queryUpdateRepair);
+			
 			log.info("Ejecutando " + queryUpdateRepair);
 
 		} catch (SQLException e) {
-			log.error("No se pudo ejecutar " + queryUpdateRepair);
+			
+			e.getStackTrace();
+			log.error("No se pudo ejecutar " + queryUpdateRepair + ". Error: " + e.getMessage());
+			
 		}
+		
 		return true;
 
 	}

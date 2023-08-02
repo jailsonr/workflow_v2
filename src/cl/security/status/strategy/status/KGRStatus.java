@@ -19,32 +19,36 @@ public class KGRStatus implements StatusStrategy {
 	@Override
 	public void acceptanceLogger(Params p) {
 
-		// final String spCall = "{call Kustom.." + PropertiesUtil.EDAI + "(?,?,?)}";
 		final String spCall = QueryEnum.EXCEEDED_DEALS_ACCEPTANCE_INSERT.query;
 		try (CallableStatement callableStatement = getConn().prepareCall(spCall)) {
+			
 			callableStatement.setString(1, MLS);
 			callableStatement.setInt(2, p.getKdbTablesId());
 			callableStatement.setInt(3, p.getDealsId());
 
-			log.info("Ejecutando " + spCall);
-			log.info("Sistema: " + MLS + " KDB Table:" + p.getKdbTablesId() + " Deal Id: " + p.getDealsId());
+			log.info("Ejecutando " + spCall + " " + MLS + ", " + p.getKdbTablesId() + ", " + p.getDealsId());
 
 			callableStatement.execute();
+			
 		} catch (SQLException e) {
-			log.error("No se pudo ejecutar" + spCall);
-			log.error("Sistema: " + MLS + " KDB Table:" + p.getKdbTablesId() + " Deal Id: " + p.getDealsId());
+			
+			e.getStackTrace();
+			log.error("No se pudo ejecutar" + spCall + " " + MLS + ", " + p.getKdbTablesId() + ", " + p.getDealsId() + ". Error: " + e.getMessage());
+			
 		}
 
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
+		
 		return this.getClass().getName();
+		
 	}
 
 	@Override
 	public int getStatus(Deal deal) {
+		
 		int status = 0;
 		String query = QueryEnum.KGR_STATUS_GET.query;
 
@@ -59,17 +63,22 @@ public class KGRStatus implements StatusStrategy {
 			cs.registerOutParameter(7, 4);
 			cs.registerOutParameter(8, 12);
 
-			log.info("Ejecutando " + query);
-			log.info("KDB Table:" + deal.getKdbTableId() + " Deal Id: " + deal.getDealId() + " Transaction Id: "
-					+ deal.getTransactionId() + " Action: " + deal.getAction() + " Version: " + deal.getVersion()
-					+ "Retries: " + deal.getRetries());
+			log.info("Ejecutando " + query + " " + deal.getKdbTableId() + ", " + deal.getDealId() + ", "
+					+ deal.getTransactionId() + ", " + deal.getAction() + ", " + deal.getVersion() + ", "
+					+ deal.getRetries());
+			
 			cs.execute();
 			status = cs.getInt(7);
 		} catch (SQLException e2) {
-			log.error("No se pudo ejecutar" + query);
+			
+			e2.getStackTrace();
+			log.error("No se pudo ejecutar" + query + " " + deal.getKdbTableId() + ", " + deal.getDealId() + ", "
+					+ deal.getTransactionId() + ", " + deal.getAction() + ", " + deal.getVersion() + ", "
+					+ deal.getRetries() + ". Error: " + e2.getMessage());
 		}
 
 		return status;
+		
 	}
 
 	@Override

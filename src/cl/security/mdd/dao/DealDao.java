@@ -4,8 +4,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -17,48 +15,8 @@ public final class DealDao {
 
 	public static Logger log = Logger.getLogger(DealDao.class);
 
-	public static Set<Deal> dealSet = new HashSet<>();
-
-	public static void loadDeals() throws SQLException {
-		Connection con = DatabaseConnection.getInstance().getConnection();
-
-		try (CallableStatement cs = con.prepareCall(QueryEnum.GET_DEAL_LIST.query);) {
-
-			cs.setString(1, "P");
-			cs.setInt(2, 0);
-
-			ResultSet rs = cs.executeQuery();
-
-			log.info("Executed " + QueryEnum.GET_DEAL_LIST.query);
-			System.out.println("Executed " + QueryEnum.GET_DEAL_LIST.query);
-
-			while (rs.next()) {
-				Deal deal = new Deal();
-				deal.setDealId(rs.getInt("DealId"));
-				deal.setKdbTableId(rs.getInt("KdbTableId"));
-				deal.setTransactionId(rs.getInt("TransactionId"));
-				deal.setRetries(rs.getInt("Retries"));
-				deal.setAction(rs.getString("Action"));
-				deal.setStatus(rs.getString("Status"));
-				deal.setVersion(rs.getInt("Version"));
-
-				log.info("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
-						+ ", TransactionId: " + rs.getInt("TransactionId"));
-				System.out.println("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
-						+ ", TransactionId: " + rs.getInt("TransactionId"));
-
-				dealSet.add(deal);
-
-			}
-		} catch (Exception e) {
-			System.out.println(e);
-			log.error("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
-			System.out.println("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
-		}
-
-	}
-	
 	public Deal getDealBD(int dealId, int kdbTable) throws SQLException {
+		
 		Connection con = DatabaseConnection.getInstance().getConnection();
 		Deal deal = null;
 
@@ -69,10 +27,11 @@ public final class DealDao {
 
 			ResultSet rs = cs.executeQuery();
 
-			log.info("Executed " + QueryEnum.GET_DEAL_LIST.query);
-			System.out.println("Executed " + QueryEnum.GET_DEAL_LIST.query);
+			log.info("Executed " + QueryEnum.GET_DEAL_LIST.query + " " + dealId + ", " + kdbTable);
+			System.out.println("Executed " + QueryEnum.GET_DEAL_LIST.query + " " + dealId + ", " + kdbTable);
 
 			while (rs.next()) {
+				
 				deal = new Deal();
 				deal.setDealId(rs.getInt("DealId"));
 				deal.setKdbTableId(rs.getInt("KdbTableId"));
@@ -82,19 +41,22 @@ public final class DealDao {
 				deal.setStatus(rs.getString("Status"));
 				deal.setVersion(rs.getInt("Version"));
 
-				log.info("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
-						+ ", TransactionId: " + rs.getInt("TransactionId"));
-				System.out.println("KdbTableId: " + rs.getInt("KdbTableId") + ", DealId: " + rs.getInt("DealId")
-						+ ", TransactionId: " + rs.getInt("TransactionId"));
-
+				log.info("Return " + QueryEnum.GET_DEAL_LIST.query + " KdbTableId " + deal.getKdbTableId() + ", DealId " + deal.getDealId()
+				+ ", TransactionId " + deal.getTransactionId() + ", Retries " + deal.getRetries()
+				+ ", Action " + deal.getAction() + ", Status " + deal.getStatus() + ", Version " + deal.getVersion());
+				System.out.println("Return " + QueryEnum.GET_DEAL_LIST.query + " KdbTableId " + deal.getKdbTableId() + ", DealId " + deal.getDealId()
+				+ ", TransactionId " + deal.getTransactionId() + ", Retries " + deal.getRetries()
+				+ ", Action " + deal.getAction() + ", Status " + deal.getStatus() + ", Version " + deal.getVersion());
 
 			}
 		} catch (Exception e) {
+			
 			System.out.println(e);
-			log.error("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
-			System.out.println("Not executed " + QueryEnum.GET_DEAL_LIST.query + ". Error: " + e.getMessage());
+			log.error("Not executed " + QueryEnum.GET_DEAL_LIST.query + " " + dealId + ", " + kdbTable + ". Error: " + e.getMessage());
+			System.out.println("Not executed " + QueryEnum.GET_DEAL_LIST.query + " " + dealId + ", " + kdbTable + ". Error: " + e.getMessage());
+			
 		}
-		
+
 		return deal;
 
 	}

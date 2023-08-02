@@ -26,11 +26,12 @@ public class CheckMessagesDB {
 		try {
 
 			con = DatabaseConnection.getInstance().getConnection();
-			log.info("Conexion establecida");
+			log.debug("Conexion establecida");
 			System.out.println("Conexion establecida");
 
 		} catch (SQLException e) {
 
+			e.getStackTrace();
 			log.error("No se pudo obtener conexion. Error: " + e.getMessage());
 			System.out.println("No se pudo obtener conexion. Error: " + e.getMessage());
 
@@ -45,11 +46,10 @@ public class CheckMessagesDB {
 
 			rs = stmt.executeQuery(QueryEnum.VERIFY_MESSAGES.query);
 
-			log.info("Executed " + QueryEnum.VERIFY_MESSAGES.query);
-			
-			System.out.println("Executed " + QueryEnum.VERIFY_MESSAGES.query);
-
 			while (rs.next()) {
+
+				log.info("Executed " + QueryEnum.VERIFY_MESSAGES.query);
+				System.out.println("Executed " + QueryEnum.VERIFY_MESSAGES.query);
 
 				String arr[] = rs.getString(3).split("\\s+");
 				params = new Params(arr[0], Integer.parseInt(arr[1].trim()), Integer.parseInt(arr[2].trim()));
@@ -58,10 +58,11 @@ public class CheckMessagesDB {
 			}
 
 		} catch (SQLException e) {
-			
-			log.error("Not executed " + QueryEnum.VERIFY_MESSAGES.query + ".Error: " + e.getMessage());
-			System.out.println("Not executed " + QueryEnum.VERIFY_MESSAGES.query + ".Error: " + e.getMessage());
-			
+
+			e.getStackTrace();
+			log.error("Not executed " + QueryEnum.VERIFY_MESSAGES.query + ". Error: " + e.getMessage());
+			System.out.println("Not executed " + QueryEnum.VERIFY_MESSAGES.query + ". Error: " + e.getMessage());
+
 		}
 
 	}

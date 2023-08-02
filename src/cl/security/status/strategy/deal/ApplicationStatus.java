@@ -43,21 +43,29 @@ public class ApplicationStatus implements Runnable {
 	public void run() {
 
 		if (strategy instanceof KondorStatus) {
-			
+
+			log.info("Flujo Kondor");
+
 			DealDao dao = new DealDao();
 			Deal deal = new Deal();
+
 			try {
+
 				deal = dao.getDealBD(this.p.getDealsId(), this.p.getKdbTablesId());
+
 			} catch (SQLException e1) {
+
 				log.error("No se pudo obtener los Deals");
+
 			}
+
 			DealProcessThread process = new DealProcessThread(deal, numToWord);
 			new Thread(process).start();
 
 		} else {
 
-			System.out.println("KGR o MLS");
-			// Reparo puede ser N o R
+			log.info("Flujo KGR o MLS");
+
 			String reparo = strategy.statusFromCustomWindow(p);
 
 			strategy.acceptanceLogger(p);

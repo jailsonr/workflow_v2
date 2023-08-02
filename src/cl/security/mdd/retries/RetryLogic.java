@@ -36,6 +36,7 @@ public class RetryLogic {
 		try {
 			Thread.sleep(dealReties * TIME_TO_WAIT);
 		} catch (Exception e) {
+			e.getStackTrace();
 		}
 	}
 
@@ -47,6 +48,4 @@ public class RetryLogic {
 		this.retryAttempts = retryAttempts;
 	}
 	
-	
-
 }

@@ -9,7 +9,6 @@ import cl.security.database.utils.QueryEnum;
 import cl.security.model.Deal;
 import cl.security.model.Params;
 import cl.security.status.strategy.StatusStrategy;
-import cl.security.utils.PropertiesUtil;
 
 public class KondorStatus implements StatusStrategy {
 
@@ -41,23 +40,26 @@ public class KondorStatus implements StatusStrategy {
 		String storeProcedure = QueryEnum.DEAL_LIST_UPDATE.query;
 
 		try (CallableStatement cs = getConn().prepareCall(storeProcedure);) {
+			
 			cs.setInt(1, deal.getDealId());
 			cs.setInt(2, deal.getKdbTableId());
 			cs.setDouble(3, deal.getTransactionId());
 			cs.setString(4, "P");
 
-			log.info("Ejecutando " + storeProcedure);
-			log.info("KDB Table:" + deal.getKdbTableId() + " Deal Id: " + deal.getDealId() + " Transaction Id: "
-					+ deal.getTransactionId() + " Status: " + "P");
+			log.info("Ejecutando " + storeProcedure + " " + deal.getDealId() + ", " + deal.getKdbTableId() + ", "
+					+ deal.getTransactionId() + ", P");
 
 			cs.executeUpdate();
+			
 		} catch (SQLException e) {
-			log.error("No se puedo ejecutar " + storeProcedure);
-			log.error("KDB Table:" + deal.getKdbTableId() + " Deal Id: " + deal.getDealId() + " Transaction Id: "
-					+ deal.getTransactionId() + " Status: " + "P");
+			
+			e.getStackTrace();
+			log.error("No se puedo ejecutar " + storeProcedure+ " " + deal.getDealId() + ", " + deal.getKdbTableId() + ", "
+					+ deal.getTransactionId() + ", P. Error: " + e.getMessage());
 		}
 
 		return status != 0;
+		
 	}
 
 }

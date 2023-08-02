@@ -11,8 +11,6 @@ import cl.security.database.utils.QueryEnum;
 import cl.security.mdd.dao.KisFileDAO;
 import cl.security.model.Deal;
 import cl.security.model.Params;
-import cl.security.quartz.scheduler.CheckJob;
-import cl.security.utils.Constants;
 import cl.security.utils.PropertiesUtil;
 
 public class KGRStatusValue {
@@ -46,17 +44,16 @@ public class KGRStatusValue {
 			cs.setString(5, repMLS);
 			cs.setString(6, envBO);
 
-			System.out.println("Ejecutando KGRStatusValue " + QueryEnum.FLAGS_DEALS.query + " @Origen, @KdbTables_Id, @DealId, @RepKGR, @RepMLS, @Bloqueo");
-			System.out.println("Ejecutando KGRStatusValue " + QueryEnum.FLAGS_DEALS.query + "U , " + kdbTableId + ", " + dealId + ", " + repKGR + ", " + repMLS + ", " + envBO);			
-			log.info("Ejecutando KGRStatusValue " + QueryEnum.FLAGS_DEALS.query + " @Origen, @KdbTables_Id, @DealId, @RepKGR, @RepMLS, @Bloqueo");
-			log.info("Ejecutando KGRStatusValue " + QueryEnum.FLAGS_DEALS.query + "U , " + kdbTableId + ", " + dealId + ", " + repKGR + ", " + repMLS + ", " + envBO);
+			System.out.println("Ejecutando " + spCall + " U, " + kdbTableId + ", " + dealId + ", " + repKGR + ", " + repMLS + ", " + envBO);			
+			log.info("Ejecutando " + spCall + " U, " + kdbTableId + ", " + dealId + ", " + repKGR + ", " + repMLS + ", " + envBO);
 			
 			cs.execute();
 			
 		} catch (SQLException e) {
 			
-			System.out.println("No se pudo ejecutar KGRStatusValue " + spCall + " " + e.getMessage());
-			log.error("No se pudo ejecutar KGRStatusValue " + spCall + " " + e.getMessage());
+			e.getStackTrace();
+			System.out.println("No se pudo ejecutar " + spCall + " U, " + kdbTableId + ", " + dealId + ", " + repKGR + ", " + repMLS + ", " + envBO+ ". Error: " + e.getMessage());
+			log.error("No se pudo ejecutar " + spCall + " U, " + kdbTableId + ", " + dealId + ", " + repKGR + ", " + repMLS + ", " + envBO+ ". Error: " + e.getMessage());
 			
 		}
 
@@ -77,8 +74,9 @@ public class KGRStatusValue {
 			
 		} catch (SQLException e) {
 			
-			System.out.println("No se pudo ejecutar " + queryUpdateRepair + " " + e.getMessage());
-			log.error("No se pudo ejecutar " + queryUpdateRepair + " " + e.getMessage());
+			e.getStackTrace();
+			System.out.println("No se pudo ejecutar " + queryUpdateRepair + ". Error: " + e.getMessage());
+			log.error("No se pudo ejecutar " + queryUpdateRepair + ". Error: " + e.getMessage());
 			
 		}
 		
@@ -88,13 +86,7 @@ public class KGRStatusValue {
 
 	public void overDraftLogger(String application, int transactionId, String action, int kdbTablesId, int dealsId) {
 
-		//String storedProcedure = "{call " + PropertiesUtil.EDAI + "(?,?,?)}";
 		String storedProcedure= QueryEnum.EXCEEDED_DEALS_ACCEPTANCE_INSERT.query;
-		
-		System.out
-				.println("WKF_ExceededDeals_acceptanceInsert: " + application + " - " + kdbTablesId + " - " + dealsId);
-		// log.info("WKF_ExceededDeals_acceptanceInsert: " + application + " - " +
-		// kdbTablesId + " - " + dealsId);
 
 		try (CallableStatement cs = DatabaseConnection.getInstance().getConnection().prepareCall(storedProcedure);) {
 			
@@ -102,17 +94,16 @@ public class KGRStatusValue {
 			cs.setInt(2, kdbTablesId);
 			cs.setInt(3, dealsId);
 			
-			System.out.println("Ejecutando KGRStatusValue " + storedProcedure + " @Application, @KdbTables_Id, @DealId");
-			System.out.println("Ejecutando KGRStatusValue " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId);			
-			log.info("Ejecutando KGRStatusValue " + storedProcedure + " @Application, @KdbTables_Id, @DealId");
-			log.info("Ejecutando KGRStatusValue " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId);
+			System.out.println("Ejecutando " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId);			
+			log.info("Ejecutando " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId);
 			
 			cs.execute();
 			
 		} catch (SQLException e) {
 			
-			System.out.println("No se pudo ejecutar " + storedProcedure + " " + e.getMessage());
-			log.error("No se pudo ejecutar " + storedProcedure + " " + e.getMessage());
+			e.getStackTrace();
+			System.out.println("No se pudo ejecutar " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId+ ". Error: " + e.getMessage());
+			log.error("No se pudo ejecutar " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId+ ". Error: " + e.getMessage());
 			
 		}
 
@@ -124,8 +115,7 @@ public class KGRStatusValue {
         int dealsId = create.getKISDealId(p.getKdbTablesId(), p.getDealsId());
         fileName = create.importFile(dealsId, p.getKdbTablesId(), 0, "Y");
 
-        System.out.println("Creando archivo KIS");
-        log.info("Creando archivo KIS");
+        log.info("Creando archivo KIS " + p.getKdbTablesId() + " " + p.getDealsId());
 
     }
 

@@ -10,7 +10,6 @@ public final class Constants {
 
 	public static final Logger log = null;
 	
-	//public static final String CONFIGURACION = "resources/config.properties";
 	public static final String CONFIGURACION = "/kondor/configuracion/Workflow/config/config.properties";
 	
 	public static final String KPLUSIMPORT = "/kondor/configuracion/Workflow/config/KplusImport_WF.params";
@@ -24,10 +23,8 @@ public final class Constants {
 	public static final String LOG4J = load.getProperties(CONFIGURACION, log).get("PropertiesLog4j").toString().trim();
 	
 	public static final String ROUTEKIS = load.getProperties(CONFIGURACION, log).get("RouteKisFile").toString().trim();
-	//public static final String ROUTEKIS = "C:\\files\\";
 	
 	public static final String ROUTETEMPLATES = load.getProperties(CONFIGURACION, log).get("RouteTemplates").toString().trim();
-	//public static final String ROUTETEMPLATES = "C:\\files\\";
 	
 	public static final String RETRIES = load.getProperties(CONFIGURACION, log).get("Retries").toString().trim();
 
@@ -60,7 +57,5 @@ public final class Constants {
 	public static final String CONNECTION_TIMEOUT = load.getProperties(CONFIGURACION, log).get("ConnectionTimeout").toString().trim();
 	
 	public static final String IDLE_TIMEOUT = load.getProperties(CONFIGURACION, log).get("IdleTimeout").toString().trim();
-	
-	
 	
 }
