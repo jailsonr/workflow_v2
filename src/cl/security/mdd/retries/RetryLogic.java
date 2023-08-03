@@ -4,7 +4,7 @@ public class RetryLogic {
 
 	private int retryAttempts;
 	final long TIME_TO_WAIT;
-	public int dealReties;
+	private int dealReties;
 
 	public RetryLogic(int retryAttempts, long timeToWait, int dealReties) {
 		this.retryAttempts = retryAttempts;
@@ -21,7 +21,6 @@ public class RetryLogic {
 		} else {
 
 		}
-
 	}
 
 	public boolean shouldRetry() {
@@ -46,6 +45,14 @@ public class RetryLogic {
 
 	public void setRetryAttempts(int retryAttempts) {
 		this.retryAttempts = retryAttempts;
+	}
+	
+	public int getDealReties() {
+		return dealReties;
+	}
+	
+	public void setDealReties(int dealReties) {
+		this.dealReties = dealReties;
 	}
 	
 }

@@ -78,8 +78,10 @@ public class DealProcessThread implements Runnable {
 
 					} else {
 
-						log.debug("Retry Attemps: " + r.getRetryAttempts() + " Deal: " + deal.getDealId()
-								+ " todavia se ejecuta");
+						log.debug("KdbTableId " + deal.getKdbTableId() + " Deal " + deal.getDealId() + " Retries "
+								+ deal.getRetries() + " todavia se ejecuta");
+
+						deal.setRetries(r.getDealReties());
 
 						if (r.getRetryAttempts() == 0) {
 
