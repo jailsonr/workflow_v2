@@ -51,8 +51,4 @@ public class RetryLogic {
 		return dealReties;
 	}
 	
-	public void setDealReties(int dealReties) {
-		this.dealReties = dealReties;
-	}
-	
 }
