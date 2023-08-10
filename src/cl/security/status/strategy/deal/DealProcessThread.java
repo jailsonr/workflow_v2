@@ -51,7 +51,7 @@ public class DealProcessThread implements Runnable {
 
 					strategy = CheckJob.status.get(Constants.KRG);
 					int kgrStatusInt = strategy.getStatus(deal);
-					log.debug("KGRSTATUS de la BD es: " + kgrStatusInt);
+					System.out.println("KGRSTATUS de la BD es: " + kgrStatusInt);
 
 					String krgStatusValue = numToWord.get(kgrStatusInt);
 
@@ -73,7 +73,7 @@ public class DealProcessThread implements Runnable {
 					if (krgStatusValueInt >= 2) {
 
 						r.stopExecution();
-						log.debug("Detiene Reintentos");
+						System.out.println("Detiene Reintentos");
 						log.info("Deal: " + deal.getDealId() + " Ya se ejecuto");
 
 					} else {

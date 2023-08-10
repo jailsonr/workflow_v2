@@ -91,10 +91,10 @@ public class KisFileDAO {
 
 			this.fileName = this.createKISFile(this.mapas, dealId);
 
-			log.info("CREATE KISFILE" + " " + kdbTableId + "," + dealId);
-			
+			System.out.println("CREATE KISFILE" + " " + kdbTableId + "," + dealId);
+
 		} catch (IOException e4) {
-			
+
 			e4.printStackTrace();
 			log.error("CREATE KISFILE" + " " + kdbTableId + "," + dealId + " ERROR: " + e4.getMessage());
 		}
@@ -124,7 +124,6 @@ public class KisFileDAO {
 
 					final String nbParams = getParamValue;
 					System.out.println(nbParams);
-					log.info(nbParams);
 
 				} else if (getParamName.equals("Template")) {
 
@@ -141,7 +140,7 @@ public class KisFileDAO {
 					}
 
 					dealId2 = getParamValue;
-					log.info("DealId2: " + dealId2);
+					System.out.println("DealId2: " + dealId2);
 
 				}
 
@@ -160,8 +159,8 @@ public class KisFileDAO {
 		PrintWriter writer = null;
 		String line = null;
 		final File In = new File(String.valueOf(this.routeTemplates) + template);
-		log.debug(routeKisFile);
-		log.debug(routeTemplates);
+		System.out.println(routeKisFile);
+		System.out.println(routeTemplates);
 		final File Out = new File(FileNameCreate);
 
 		try {
@@ -199,12 +198,12 @@ public class KisFileDAO {
 	}
 
 	public int getKISDealId(int kdbTableId, int dealId) {
-		
+
 		final String storeProcedure = QueryEnum.GET_KIS_DEAL_ID.query;
 		int dealsIdOut = 0;
-		
+
 		try (CallableStatement cs = DatabaseConnection.getInstance().getConnection().prepareCall(storeProcedure);) {
-			
+
 			cs.setInt(1, kdbTableId);
 			cs.setInt(2, dealId);
 			cs.registerOutParameter(3, 4);
@@ -216,11 +215,11 @@ public class KisFileDAO {
 			dealsIdOut = cs.getInt(3);
 
 		} catch (SQLException e2) {
-			
+
 			e2.printStackTrace();
 			dealsIdOut = dealId;
 			log.info("DealIdOUTPUT: " + dealsIdOut + " Error: " + e2.getMessage());
-			
+
 		}
 		return dealsIdOut;
 	}
