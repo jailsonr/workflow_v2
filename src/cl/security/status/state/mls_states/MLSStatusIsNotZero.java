@@ -29,20 +29,18 @@ public class MLSStatusIsNotZero extends KGRStatusState{
 
 	@Override
 	public void kgrStatusIsThreeExecution() {
-		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
-				"R", "S");
-		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
-				deal.getTransactionId());
+		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R", "R", "S");
+		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(), deal.getTransactionId());
+		kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		kgrStatusValue.overDraftLogger("KGR", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		DeleteMessage.deleteMessage(p);
 	}
 
 	@Override
 	public void kgrStatusIsFourExecution() {
-		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R",
-				"R", "S");
-		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(),
-				deal.getTransactionId());
+		kgrStatusValue.queryUpdateRepairKGR(deal.getDealId(), deal.getKdbTableId(), "R", "R", "S");
+		kgrStatusValue.queryUpdateWKFDealsList(deal.getDealId(), deal.getKdbTableId(), deal.getTransactionId());
+		kgrStatusValue.overDraftLogger("MLS", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		kgrStatusValue.overDraftLogger("KGR", deal.getTransactionId() , deal.getAction(), deal.getKdbTableId(), deal.getDealId());
 		DeleteMessage.deleteMessage(p);
 	}

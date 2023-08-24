@@ -14,26 +14,26 @@ public class KGRStatus implements StatusStrategy {
 
 	Logger log = Logger.getLogger(KGRStatus.class);
 
-	private static final String MLS = "MLS";
-
+	private static final String KGR = "KGR";
+	
 	@Override
 	public void acceptanceLogger(Params p) {
 
 		final String spCall = QueryEnum.EXCEEDED_DEALS_ACCEPTANCE_INSERT.query;
 		try (CallableStatement callableStatement = getConn().prepareCall(spCall)) {
 			
-			callableStatement.setString(1, MLS);
+			callableStatement.setString(1, KGR);
 			callableStatement.setInt(2, p.getKdbTablesId());
 			callableStatement.setInt(3, p.getDealsId());
 
-			log.info("Ejecutando " + spCall + " " + MLS + ", " + p.getKdbTablesId() + ", " + p.getDealsId());
+			log.info("Ejecutando " + spCall + " " + KGR + ", " + p.getKdbTablesId() + ", " + p.getDealsId());
 
 			callableStatement.execute();
 			
 		} catch (SQLException e) {
 			
 			e.getStackTrace();
-			log.error("No se pudo ejecutar" + spCall + " " + MLS + ", " + p.getKdbTablesId() + ", " + p.getDealsId() + ". Error: " + e.getMessage());
+			log.error("No se pudo ejecutar" + spCall + " " + KGR + ", " + p.getKdbTablesId() + ", " + p.getDealsId() + ". Error: " + e.getMessage());
 			
 		}
 

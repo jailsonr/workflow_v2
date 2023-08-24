@@ -86,24 +86,26 @@ public class KGRStatusValue {
 
 	public void overDraftLogger(String application, int transactionId, String action, int kdbTablesId, int dealsId) {
 
-		String storedProcedure= QueryEnum.EXCEEDED_DEALS_ACCEPTANCE_INSERT.query;
+		String storedProcedure= QueryEnum.EXCEEDED_DEALS_INSERT.query;
 
 		try (CallableStatement cs = DatabaseConnection.getInstance().getConnection().prepareCall(storedProcedure);) {
 			
 			cs.setString(1, application);
-			cs.setInt(2, kdbTablesId);
-			cs.setInt(3, dealsId);
+			cs.setInt(2, transactionId);
+			cs.setString(3, action);
+			cs.setInt(4, kdbTablesId);
+			cs.setInt(5, dealsId);
 			
-			System.out.println("Ejecutando " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId);			
-			log.info("Ejecutando " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId);
+			System.out.println("Ejecutando " + storedProcedure + " " + application + ", " + transactionId + ", " + action + ", " + kdbTablesId + ", " + dealsId);			
+			log.info("Ejecutando " + storedProcedure + " " + application + ", " + transactionId + ", " + action + ", " + kdbTablesId + ", " + dealsId);
 			
 			cs.execute();
 			
 		} catch (SQLException e) {
 			
 			e.getStackTrace();
-			System.out.println("No se pudo ejecutar " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId+ ". Error: " + e.getMessage());
-			log.error("No se pudo ejecutar " + storedProcedure + " " + application + ", " + kdbTablesId + ", " + dealsId+ ". Error: " + e.getMessage());
+			System.out.println("No se pudo ejecutar " + storedProcedure + " " + application + ", " + transactionId + ", " + action + ", " + kdbTablesId + ", " + dealsId + ". Error: " + e.getMessage());
+			log.error("No se pudo ejecutar " + storedProcedure + " " + application + ", " + transactionId + ", " + action + ", " + kdbTablesId + ", " + dealsId + ". Error: " + e.getMessage());
 			
 		}
 
